@@ -3,6 +3,7 @@ import type { Metadata, Viewport } from "next"
 import { GeistSans } from "geist/font/sans"
 import { GeistMono } from "geist/font/mono"
 import { Analytics } from "@vercel/analytics/next"
+import { SpeedInsights } from "@vercel/speed-insights/next"
 import "./globals.css"
 import { Suspense } from "react"
 import PWAInstallPrompt from "../components/pwa-install-prompt"
@@ -64,6 +65,7 @@ export default function RootLayout({
         <Suspense fallback={<div>Loading...</div>}>{children}</Suspense>
         <PWAInstallPrompt />
         <Analytics />
+        <SpeedInsights />
       </body>
     </html>
   )
