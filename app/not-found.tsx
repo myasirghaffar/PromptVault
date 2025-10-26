@@ -15,7 +15,7 @@ export default function NotFound() {
         <CardContent>
           <Button
             asChild
-            className="w-full bg-gradient-to-r from-purple-500 to-purple-700 hover:from-purple-600 hover:to-purple-800"
+            className="w-full bg-gradient-to-r from-purple-500 to-purple-700 hover:from-purple-600 hover:to-purple-800 mb-3"
           >
             <Link href="/">Back to Home</Link>
           </Button>
