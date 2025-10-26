@@ -19,7 +19,10 @@ export default async function AdminPage() {
     redirect("/")
   }
 
-  const { data: prompts } = await supabase.from("prompts").select("*").order("created_at", { ascending: false })
+  const { data: prompts } = await supabase
+    .from("prompts")
+    .select("id, title, description, prompt_text, category, tags, image_url, created_by, created_at, profiles:created_by(username, is_admin)")
+    .order("created_at", { ascending: false })
 
   return <AdminDashboard prompts={prompts || []} userId={user.id} />
 }

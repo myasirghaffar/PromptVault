@@ -4,7 +4,7 @@ import { Button } from "@/components/ui/button"
 import { createClient } from "@/lib/supabase/client"
 import Link from "next/link"
 import { useRouter } from "next/navigation"
-import { Sparkles, LogOut, Shield, BookOpen } from "lucide-react"
+import { Sparkles, LogOut, Shield, BookOpen, User } from "lucide-react"
 
 interface HeaderProps {
   user: { id: string; email?: string } | null
@@ -14,9 +14,12 @@ interface HeaderProps {
 
 export function Header({ user, isAdmin, username }: HeaderProps) {
   const router = useRouter()
+  
   const handleLogout = async () => {
     const supabase = createClient()
     await supabase.auth.signOut()
+    // Redirect to home page after logout
+    router.push("/")
     router.refresh()
   }
 
@@ -33,14 +36,15 @@ export function Header({ user, isAdmin, username }: HeaderProps) {
         </Link>
 
         <nav className="flex items-center gap-2 md:gap-4">
+          {/* Blog Link */}
           <Button
             asChild
             variant="ghost"
-            className="text-muted-foreground hover:text-foreground hover:bg-purple-500/10 cursor-pointer hidden md:flex"
+            className="text-muted-foreground hover:text-foreground hover:bg-purple-500/10 cursor-pointer"
           >
             <Link href="/blog" className="flex items-center gap-2">
               <BookOpen className="h-4 w-4" />
-              <span>Blog</span>
+              <span className="hidden md:inline">Blog</span>
             </Link>
           </Button>
 
@@ -52,9 +56,9 @@ export function Header({ user, isAdmin, username }: HeaderProps) {
                   variant="ghost"
                   className="text-purple-400 hover:text-purple-300 hover:bg-purple-500/10 cursor-pointer"
                 >
-                  <Link href="/admin">
-                    <Shield className="h-4 w-4 mr-2" />
-                    <span className="">{username ? `@${username}` : "Admin"}</span>
+                  <Link href="/admin" className="flex items-center gap-2">
+                    <Shield className="h-4 w-4" />
+                    <span>{username ? `@${username}` : "Admin"}</span>
                   </Link>
                 </Button>
               ) : (
@@ -63,7 +67,10 @@ export function Header({ user, isAdmin, username }: HeaderProps) {
                   variant="ghost"
                   className="text-muted-foreground hover:text-foreground hover:bg-purple-500/10 cursor-pointer"
                 >
-                  <Link href="/dashboard">{username ? `@${username}` : "Dashboard"}</Link>
+                  <Link href="/dashboard" className="flex items-center gap-2">
+                    <User className="h-4 w-4" />
+                    <span>{username ? `@${username}` : "Dashboard"}</span>
+                  </Link>
                 </Button>
               )}
               <Button
@@ -72,21 +79,16 @@ export function Header({ user, isAdmin, username }: HeaderProps) {
                 className="text-muted-foreground hover:text-foreground hover:bg-purple-500/10 cursor-pointer"
               >
                 <LogOut className="h-4 w-4 mr-2" />
-                <span className="hidden md:block"> Logout </span>
+                <span className="hidden md:inline">Logout</span>
               </Button>
             </>
           ) : (
-            <>
-              <Button asChild variant="ghost" className="hover:bg-purple-500/10 cursor-pointer">
-                <Link href="/auth/login">Login</Link>
-              </Button>
-              <Button
-                asChild
-                className="bg-gradient-to-r from-purple-500 to-purple-700 hover:from-purple-600 hover:to-purple-800 cursor-pointer"
-              >
-                <Link href="/auth/sign-up">Sign Up</Link>
-              </Button>
-            </>
+            <Button asChild variant="ghost" className="hover:bg-purple-500/10 cursor-pointer">
+              <Link href="/auth/login" className="flex items-center gap-2">
+                <User className="h-4 w-4" />
+                <span className="hidden md:inline">Sign In</span>
+              </Link>
+            </Button>
           )}
         </nav>
       </div>

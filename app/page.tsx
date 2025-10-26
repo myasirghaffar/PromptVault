@@ -19,7 +19,7 @@ export default async function HomePage() {
 
   const { data: prompts } = await supabase
     .from("prompts")
-    .select("id, title, description, prompt_text, category, tags, image_url, profiles(username, is_admin)")
+    .select("id, title, description, prompt_text, category, tags, image_url, profiles:created_by(username, is_admin)")
     .eq("status", "approved")
     .order("created_at", { ascending: false })
 
