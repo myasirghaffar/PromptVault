@@ -23,7 +23,7 @@ interface Prompt {
   category: string
   tags: string[]
   image_url: string | null
-  created_at: string
+  created_at?: string
   created_by?: string | null
   profiles?: { username: string | null; is_admin: boolean | null } | null
 }

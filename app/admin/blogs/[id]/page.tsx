@@ -3,8 +3,14 @@ import { cookies } from "next/headers"
 import { BlogForm } from "@/components/blog-form"
 import { notFound } from "next/navigation"
 
-export default async function EditBlogPage({ params }: { params: { id: string } }) {
-  if (params.id === "create") {
+interface EditBlogPageProps {
+  params: Promise<{ id: string }>
+}
+
+export default async function EditBlogPage({ params }: EditBlogPageProps) {
+  const { id } = await params
+  
+  if (id === "create") {
     return (
       <div className="p-6 md:p-8 space-y-8">
         <div className="max-w-7xl mx-auto space-y-8">
@@ -32,7 +38,7 @@ export default async function EditBlogPage({ params }: { params: { id: string } 
     },
   })
 
-  const { data: blog } = await supabase.from("blogs").select("*").eq("id", params.id).single()
+  const { data: blog } = await supabase.from("blogs").select("*").eq("id", id).single()
 
   if (!blog) {
     notFound()

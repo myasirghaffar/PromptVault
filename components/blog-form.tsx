@@ -123,8 +123,8 @@ export function BlogForm({ blog, onSuccess, onCancel }: BlogFormProps) {
 
       const keywords = formData.keywords
         .split(",")
-        .map((k) => k.trim())
-        .filter((k) => k)
+        .map((k: string) => k.trim())
+        .filter((k: string) => k)
 
       const blogData = {
         title: formData.title,

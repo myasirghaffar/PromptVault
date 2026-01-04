@@ -12,7 +12,8 @@ import Image from "next/image"
 // Revalidate every 60 seconds for fresh content
 export const revalidate = 60
 
-export async function generateMetadata({ params }: { params: { slug: string } }) {
+export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }) {
+  const { slug } = await params
   const cookieStore = await cookies()
   // Use anon key instead of service role key for security
   const supabase = createServerClient(process.env.NEXT_PUBLIC_SUPABASE_URL!, process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!, {
@@ -29,7 +30,7 @@ export async function generateMetadata({ params }: { params: { slug: string } })
   const { data: blog } = await supabase
     .from("blogs")
     .select("*")
-    .eq("slug", params.slug)
+    .eq("slug", slug)
     .eq("status", "published")
     .single()
 
@@ -49,7 +50,12 @@ export async function generateMetadata({ params }: { params: { slug: string } })
   }
 }
 
-export default async function BlogDetailPage({ params }: { params: { slug: string } }) {
+interface BlogDetailPageProps {
+  params: Promise<{ slug: string }>
+}
+
+export default async function BlogDetailPage({ params }: BlogDetailPageProps) {
+  const { slug } = await params
   const cookieStore = await cookies()
   // Use anon key instead of service role key for security
   const supabase = createServerClient(process.env.NEXT_PUBLIC_SUPABASE_URL!, process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!, {
@@ -66,7 +72,7 @@ export default async function BlogDetailPage({ params }: { params: { slug: strin
   const { data: blog } = await supabase
     .from("blogs")
     .select("*, profiles:author_id(username,is_admin)")
-    .eq("slug", params.slug)
+    .eq("slug", slug)
     .eq("status", "published")
     .single()
 

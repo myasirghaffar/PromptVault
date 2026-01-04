@@ -20,6 +20,9 @@ interface Prompt {
   category: string
   tags: string[]
   image_url: string | null
+  created_at?: string
+  created_by?: string | null
+  profiles?: { username: string | null; is_admin: boolean | null } | null
 }
 
 interface PromptFormProps {
@@ -182,7 +185,17 @@ export function PromptForm({ prompt, userId, onSuccess, onCancel, isUserSubmissi
           .single()
 
         if (error) throw error
-        if (onSuccess) onSuccess(data)
+        
+        // Transform data to match expected type (profiles array to single object)
+        if (data && onSuccess) {
+          const transformedData = {
+            ...data,
+            profiles: Array.isArray(data.profiles) 
+              ? data.profiles[0] || null 
+              : data.profiles || null,
+          }
+          onSuccess(transformedData as Prompt)
+        }
       } else {
         const { data, error } = await supabase
           .from("prompts")
@@ -201,6 +214,14 @@ export function PromptForm({ prompt, userId, onSuccess, onCancel, isUserSubmissi
 
         if (error) throw error
 
+        // Transform data to match expected type (profiles array to single object)
+        const transformedData = data ? {
+          ...data,
+          profiles: Array.isArray(data.profiles) 
+            ? data.profiles[0] || null 
+            : data.profiles || null,
+        } : null
+
         if (isUserSubmission) {
           setSuccessMessage("Prompt submitted successfully! It will be reviewed by our team.")
           // Reset form
@@ -218,8 +239,8 @@ export function PromptForm({ prompt, userId, onSuccess, onCancel, isUserSubmissi
           setTimeout(() => {
             router.push("/dashboard/my-prompts")
           }, 2000)
-        } else if (onSuccess) {
-          onSuccess(data)
+        } else if (onSuccess && transformedData) {
+          onSuccess(transformedData as Prompt)
         }
       }
     } catch (err) {
