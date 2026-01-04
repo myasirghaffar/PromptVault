@@ -11,9 +11,13 @@ export const metadata = {
   description: "Get in touch with the PromptVault team",
 }
 
+// Static page - no need for frequent revalidation
+export const revalidate = 3600 // Revalidate every hour
+
 export default async function ContactPage() {
   const cookieStore = await cookies()
-  const supabase = createServerClient(process.env.NEXT_PUBLIC_SUPABASE_URL!, process.env.SUPABASE_SERVICE_ROLE_KEY!, {
+  // Use anon key instead of service role key for security
+  const supabase = createServerClient(process.env.NEXT_PUBLIC_SUPABASE_URL!, process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!, {
     cookies: {
       getAll() {
         return cookieStore.getAll()

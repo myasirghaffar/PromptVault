@@ -5,6 +5,7 @@ import { createClient } from "@/lib/supabase/client"
 import Link from "next/link"
 import { useRouter } from "next/navigation"
 import { Sparkles, LogOut, Shield, BookOpen, User } from "lucide-react"
+import { memo, useCallback } from "react"
 
 interface HeaderProps {
   user: { id: string; email?: string } | null
@@ -12,16 +13,21 @@ interface HeaderProps {
   username?: string
 }
 
-export function Header({ user, isAdmin, username }: HeaderProps) {
+/**
+ * Header component with memoization to prevent unnecessary re-renders
+ * Only re-renders when user, isAdmin, or username changes
+ */
+export const Header = memo(function Header({ user, isAdmin, username }: HeaderProps) {
   const router = useRouter()
   
-  const handleLogout = async () => {
+  // Memoize logout handler to prevent recreation on every render
+  const handleLogout = useCallback(async () => {
     const supabase = createClient()
     await supabase.auth.signOut()
     // Redirect to home page after logout
     router.push("/")
-    router.refresh()
-  }
+    // router.refresh() is redundant after push, Next.js handles navigation
+  }, [router])
 
   return (
     <header className="sticky top-0 z-50 w-full border-b border-purple-500/20 bg-background/80 backdrop-blur-xl">
@@ -94,4 +100,11 @@ export function Header({ user, isAdmin, username }: HeaderProps) {
       </div>
     </header>
   )
-}
+}, (prevProps, nextProps) => {
+  // Custom comparison function for memo
+  return (
+    prevProps.user?.id === nextProps.user?.id &&
+    prevProps.isAdmin === nextProps.isAdmin &&
+    prevProps.username === nextProps.username
+  )
+})

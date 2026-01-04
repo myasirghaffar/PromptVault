@@ -61,8 +61,19 @@ export default function RootLayout({
         <link rel="apple-touch-icon" sizes="167x167" href="/icons/icon-192x192.svg" />
         <link rel="mask-icon" href="/icons/icon-192x192.svg" color="#000000" />
       </head>
-      <body className={`font-sans ${GeistSans.variable} ${GeistMono.variable} antialiased flex flex-col min-h-screen`}>
-        <Suspense fallback={<div>Loading...</div>}>{children}</Suspense>
+      <body
+        className={`font-sans ${GeistSans.variable} ${GeistMono.variable} antialiased flex flex-col min-h-screen`}
+        suppressHydrationWarning
+      >
+        <Suspense
+          fallback={
+            <div className="flex items-center justify-center min-h-screen">
+              <div className="animate-pulse text-purple-400">Loading...</div>
+            </div>
+          }
+        >
+          {children}
+        </Suspense>
         <PWAInstallPrompt />
         <Analytics />
         <SpeedInsights />

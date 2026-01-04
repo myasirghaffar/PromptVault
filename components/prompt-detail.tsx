@@ -4,7 +4,7 @@ import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { Copy, Share2, ExternalLink, Check } from "lucide-react"
-import { useState } from "react"
+import { useState, useCallback, useEffect, useRef } from "react"
 import Image from "next/image"
 import Link from "next/link"
 
@@ -23,36 +23,68 @@ interface PromptDetailProps {
   prompt: Prompt
 }
 
+/**
+ * PromptDetail component with memoized handlers and proper cleanup
+ * Optimized for performance and prevents memory leaks
+ */
 export function PromptDetail({ prompt }: PromptDetailProps) {
   const [copied, setCopied] = useState(false)
+  const timeoutRef = useRef<NodeJS.Timeout | null>(null)
 
-  const handleCopy = async () => {
-    await navigator.clipboard.writeText(prompt.prompt_text)
-    setCopied(true)
-    setTimeout(() => setCopied(false), 2000)
-  }
-
-  const handleShare = async () => {
-    if (navigator.share) {
-      await navigator.share({
-        title: prompt.title,
-        text: prompt.description || prompt.title,
-        url: window.location.href,
-      })
-    } else {
-      await navigator.clipboard.writeText(window.location.href)
-      alert("Link copied to clipboard!")
+  // Cleanup timeout on unmount
+  useEffect(() => {
+    return () => {
+      if (timeoutRef.current) {
+        clearTimeout(timeoutRef.current)
+      }
     }
-  }
+  }, [])
 
-  const openInChatGPT = () => {
+  // Memoize copy handler
+  const handleCopy = useCallback(async () => {
+    try {
+      await navigator.clipboard.writeText(prompt.prompt_text)
+      setCopied(true)
+      // Clear previous timeout if exists
+      if (timeoutRef.current) {
+        clearTimeout(timeoutRef.current)
+      }
+      timeoutRef.current = setTimeout(() => setCopied(false), 2000)
+    } catch (err) {
+      console.error("Failed to copy:", err)
+    }
+  }, [prompt.prompt_text])
+
+  // Memoize share handler
+  const handleShare = useCallback(async () => {
+    try {
+      if (navigator.share) {
+        await navigator.share({
+          title: prompt.title,
+          text: prompt.description || prompt.title,
+          url: window.location.href,
+        })
+      } else {
+        await navigator.clipboard.writeText(window.location.href)
+        alert("Link copied to clipboard!")
+      }
+    } catch (err) {
+      // User cancelled share or error occurred
+      if (err instanceof Error && err.name !== "AbortError") {
+        console.error("Share error:", err)
+      }
+    }
+  }, [prompt.title, prompt.description])
+
+  // Memoize external link handlers
+  const openInChatGPT = useCallback(() => {
     const encodedPrompt = encodeURIComponent(prompt.prompt_text)
-    window.open(`https://chat.openai.com/?q=${encodedPrompt}`, "_blank")
-  }
+    window.open(`https://chat.openai.com/?q=${encodedPrompt}`, "_blank", "noopener,noreferrer")
+  }, [prompt.prompt_text])
 
-  const openInGemini = () => {
-    window.open("https://gemini.google.com/", "_blank")
-  }
+  const openInGemini = useCallback(() => {
+    window.open("https://gemini.google.com/", "_blank", "noopener,noreferrer")
+  }, [])
 
   return (
     <main className="container mx-auto px-4 py-12 max-w-4xl">
@@ -91,10 +123,12 @@ export function PromptDetail({ prompt }: PromptDetailProps) {
           {prompt.image_url && (
             <div className="relative w-full h-96 md:h-[800px] overflow-hidden p-6">
               <Image
-                src={prompt.image_url || "/placeholder.svg"}
+                src={prompt.image_url}
                 alt={prompt.title}
                 fill
+                sizes="(max-width: 768px) 100vw, (max-width: 1200px) 80vw, 896px"
                 className="object-cover object-top rounded-lg"
+                priority
               />
             </div>
           )}

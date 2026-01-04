@@ -5,7 +5,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Badge } from "@/components/ui/badge"
 import { Edit, Trash2 } from "lucide-react"
 import { createClient } from "@/lib/supabase/client"
-import { useState } from "react"
+import { useState, useCallback, useMemo, memo } from "react"
 
 interface Prompt {
   id: string
@@ -26,28 +26,46 @@ interface PromptListProps {
   onDelete: (promptId: string) => void
 }
 
-export function PromptList({ prompts, onEdit, onDelete }: PromptListProps) {
+/**
+ * PromptList component with memoization and optimized delete handler
+ * Prevents unnecessary re-renders and improves performance
+ */
+export const PromptList = memo(function PromptList({ prompts, onEdit, onDelete }: PromptListProps) {
   const [deletingId, setDeletingId] = useState<string | null>(null)
 
-  const handleDelete = async (prompt: Prompt) => {
-    if (!confirm(`Are you sure you want to delete "${prompt.title}"?`)) {
-      return
-    }
+  // Memoize delete handler to prevent recreation on every render
+  const handleDelete = useCallback(
+    async (prompt: Prompt) => {
+      if (!confirm(`Are you sure you want to delete "${prompt.title}"?`)) {
+        return
+      }
 
-    setDeletingId(prompt.id)
-    const supabase = createClient()
+      setDeletingId(prompt.id)
+      const supabase = createClient()
 
-    try {
-      const { error } = await supabase.from("prompts").delete().eq("id", prompt.id)
+      try {
+        const { error } = await supabase.from("prompts").delete().eq("id", prompt.id)
 
-      if (error) throw error
-      onDelete(prompt.id)
-    } catch (err) {
-      alert(err instanceof Error ? err.message : "Failed to delete prompt")
-    } finally {
-      setDeletingId(null)
-    }
-  }
+        if (error) throw error
+        onDelete(prompt.id)
+      } catch (err) {
+        // Use console.error instead of alert for better UX
+        console.error("Delete error:", err)
+        alert(err instanceof Error ? err.message : "Failed to delete prompt")
+      } finally {
+        setDeletingId(null)
+      }
+    },
+    [onDelete]
+  )
+
+  // Memoize edit handler
+  const handleEdit = useCallback(
+    (prompt: Prompt) => {
+      onEdit(prompt)
+    },
+    [onEdit]
+  )
 
   if (prompts.length === 0) {
     return (
@@ -96,7 +114,7 @@ export function PromptList({ prompts, onEdit, onDelete }: PromptListProps) {
                     <Button
                       size="sm"
                       variant="outline"
-                      onClick={() => onEdit(prompt)}
+                      onClick={() => handleEdit(prompt)}
                       className="border-purple-500/30 hover:bg-purple-500/10 cursor-pointer"
                     >
                       <Edit className="h-4 w-4" />
@@ -124,4 +142,4 @@ export function PromptList({ prompts, onEdit, onDelete }: PromptListProps) {
       })}
     </div>
   )
-}
+})

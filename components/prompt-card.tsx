@@ -2,6 +2,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Badge } from "@/components/ui/badge"
 import Link from "next/link"
 import Image from "next/image"
+import { memo } from "react"
 
 interface PromptCardProps {
   id: string
@@ -10,20 +11,34 @@ interface PromptCardProps {
   category: string
   tags: string[]
   imageUrl: string | null
-  ownerName?: string //
+  ownerName?: string
 }
 
-export function PromptCard({ id, title, description, category, tags, imageUrl, ownerName }: PromptCardProps) {
+/**
+ * PromptCard component with memoization and optimized image loading
+ * Uses Next.js Image component with proper sizing for better Core Web Vitals
+ */
+export const PromptCard = memo(function PromptCard({
+  id,
+  title,
+  description,
+  category,
+  tags,
+  imageUrl,
+  ownerName,
+}: PromptCardProps) {
   return (
     <Link href={`/prompt/${id}`} className="cursor-pointer">
       <Card className="group h-full overflow-hidden border-purple-500/20 bg-card/50 backdrop-blur-sm hover:border-purple-500/40 hover:shadow-lg hover:shadow-purple-500/20 transition-all duration-300">
         {imageUrl && (
           <div className="relative h-96 w-full overflow-hidden">
             <Image
-              src={imageUrl || "/placeholder.svg"}
+              src={imageUrl}
               alt={title}
               fill
+              sizes="(max-width: 768px) 50vw, (max-width: 1200px) 33vw, 25vw"
               className="object-cover object-top group-hover:scale-105 transition-transform duration-300"
+              loading="lazy"
             />
             {ownerName && (
               <div className="absolute top-2 right-2 rounded-md bg-black/60 text-white text-xs px-2 py-1">
@@ -66,4 +81,4 @@ export function PromptCard({ id, title, description, category, tags, imageUrl, o
       </Card>
     </Link>
   )
-}
+})

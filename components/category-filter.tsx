@@ -2,6 +2,7 @@
 
 import { Button } from "@/components/ui/button"
 import { cn } from "@/lib/utils"
+import { memo, useCallback } from "react"
 
 interface CategoryFilterProps {
   categories: string[]
@@ -9,12 +10,31 @@ interface CategoryFilterProps {
   onSelectCategory: (category: string) => void
 }
 
-export function CategoryFilter({ categories, selectedCategory, onSelectCategory }: CategoryFilterProps) {
+/**
+ * CategoryFilter component with memoization
+ * Prevents unnecessary re-renders when parent re-renders
+ */
+export const CategoryFilter = memo(function CategoryFilter({
+  categories,
+  selectedCategory,
+  onSelectCategory,
+}: CategoryFilterProps) {
+  // Memoize category selection handlers
+  const handleSelectAll = useCallback(() => {
+    onSelectCategory("All")
+  }, [onSelectCategory])
+
+  const handleSelectCategory = useCallback(
+    (category: string) => {
+      onSelectCategory(category)
+    },
+    [onSelectCategory]
+  )
   return (
     <div className="flex flex-nowrap gap-2 overflow-x-auto scrollbar-hide pb-2">
       <Button
         variant={selectedCategory === "All" ? "default" : "outline"}
-        onClick={() => onSelectCategory("All")}
+        onClick={handleSelectAll}
         className={cn(
           "transition-all flex-shrink-0",
           selectedCategory === "All"
@@ -28,7 +48,7 @@ export function CategoryFilter({ categories, selectedCategory, onSelectCategory 
         <Button
           key={category}
           variant={selectedCategory === category ? "default" : "outline"}
-          onClick={() => onSelectCategory(category)}
+          onClick={() => handleSelectCategory(category)}
           className={cn(
             "transition-all flex-shrink-0",
             selectedCategory === category
@@ -41,4 +61,4 @@ export function CategoryFilter({ categories, selectedCategory, onSelectCategory 
       ))}
     </div>
   )
-}
+})

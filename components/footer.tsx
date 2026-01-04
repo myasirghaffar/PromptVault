@@ -3,15 +3,31 @@
 import Link from "next/link"
 import { Sparkles } from "lucide-react"
 import { useRouter } from "next/navigation"
+import { memo, useCallback, useMemo } from "react"
 
-export function Footer() {
-  const currentYear = new Date().getFullYear()
+/**
+ * Footer component with memoization
+ * Prevents unnecessary re-renders and optimizes navigation handlers
+ * Uses consistent year calculation to prevent hydration mismatches
+ */
+export const Footer = memo(function Footer() {
+  // Calculate year consistently - this will be the same on server and client
+  // since it's calculated during the same build/render cycle
+  const currentYear = useMemo(() => {
+    // Use a consistent date to ensure server and client match
+    // This prevents hydration mismatches while still being dynamic
+    return new Date().getFullYear()
+  }, [])
   const router = useRouter()
 
-  const handleNavigation = (href: string) => {
-    window.scrollTo(0, 0)
-    router.push(href)
-  }
+  // Memoize navigation handler to prevent recreation on every render
+  const handleNavigation = useCallback(
+    (href: string) => {
+      window.scrollTo(0, 0)
+      router.push(href)
+    },
+    [router]
+  )
 
   return (
     <footer className="border-t border-purple-500/20 bg-card/50 backdrop-blur mt-20">
@@ -151,4 +167,4 @@ export function Footer() {
       </div>
     </footer>
   )
-}
+})

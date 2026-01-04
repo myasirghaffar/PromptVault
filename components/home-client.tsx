@@ -1,6 +1,6 @@
 "use client"
 
-import { useState } from "react"
+import { useState, useMemo, useCallback } from "react"
 import { Input } from "@/components/ui/input"
 import { Search } from "lucide-react"
 import { CategoryFilter } from "@/components/category-filter"
@@ -14,7 +14,7 @@ interface Prompt {
   category: string
   tags: string[]
   image_url: string | null
-  profiles?: { username?: string | null; is_admin?: boolean | null } //
+  profiles?: { username?: string | null; is_admin?: boolean | null }
 }
 
 interface HomeClientProps {
@@ -22,20 +22,34 @@ interface HomeClientProps {
   categories: string[]
 }
 
+/**
+ * HomeClient component with optimized filtering using useMemo
+ * Prevents unnecessary re-computation of filtered prompts
+ */
 export function HomeClient({ prompts, categories }: HomeClientProps) {
   const [searchQuery, setSearchQuery] = useState("")
   const [selectedCategory, setSelectedCategory] = useState("All")
 
-  const filteredPrompts = prompts.filter((prompt) => {
-    const matchesSearch =
-      prompt.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      prompt.description?.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      prompt.tags.some((tag) => tag.toLowerCase().includes(searchQuery.toLowerCase()))
+  // Memoize filtered prompts to avoid recalculating on every render
+  const filteredPrompts = useMemo(() => {
+    const lowerSearchQuery = searchQuery.toLowerCase()
+    
+    return prompts.filter((prompt) => {
+      const matchesSearch =
+        prompt.title.toLowerCase().includes(lowerSearchQuery) ||
+        prompt.description?.toLowerCase().includes(lowerSearchQuery) ||
+        prompt.tags.some((tag) => tag.toLowerCase().includes(lowerSearchQuery))
 
-    const matchesCategory = selectedCategory === "All" || prompt.category === selectedCategory
+      const matchesCategory = selectedCategory === "All" || prompt.category === selectedCategory
 
-    return matchesSearch && matchesCategory
-  })
+      return matchesSearch && matchesCategory
+    })
+  }, [prompts, searchQuery, selectedCategory])
+
+  // Memoize category change handler
+  const handleCategoryChange = useCallback((category: string) => {
+    setSelectedCategory(category)
+  }, [])
 
   return (
     <>
@@ -56,7 +70,7 @@ export function HomeClient({ prompts, categories }: HomeClientProps) {
           <CategoryFilter
             categories={categories}
             selectedCategory={selectedCategory}
-            onSelectCategory={setSelectedCategory}
+            onSelectCategory={handleCategoryChange}
           />
         </div>
       </div>

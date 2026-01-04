@@ -2,6 +2,10 @@ import { createClient } from "@/lib/supabase/server"
 import Link from "next/link"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { FileText, CheckCircle, Clock, XCircle } from "lucide-react"
+import { redirect } from "next/navigation"
+
+// Dashboard should be dynamic to show real-time stats
+export const dynamic = "force-dynamic"
 
 export default async function DashboardPage() {
   const supabase = await createClient()
@@ -10,15 +14,24 @@ export default async function DashboardPage() {
     data: { user },
   } = await supabase.auth.getUser()
 
-  if (!user) return null
+  if (!user) {
+    redirect("/auth/login")
+  }
 
   // Get user's prompts statistics
   const { data: prompts } = await supabase.from("prompts").select("*").eq("created_by", user.id)
 
-  const totalPrompts = prompts?.length || 0
-  const approvedPrompts = prompts?.filter((p) => p.status === "approved").length || 0
-  const pendingPrompts = prompts?.filter((p) => p.status === "pending").length || 0
-  const rejectedPrompts = prompts?.filter((p) => p.status === "rejected").length || 0
+  // Calculate stats efficiently in a single pass
+  const stats = prompts?.reduce(
+    (acc, prompt) => {
+      acc.total++
+      if (prompt.status === "approved") acc.approved++
+      else if (prompt.status === "pending") acc.pending++
+      else if (prompt.status === "rejected") acc.rejected++
+      return acc
+    },
+    { total: 0, approved: 0, pending: 0, rejected: 0 }
+  ) || { total: 0, approved: 0, pending: 0, rejected: 0 }
 
   return (
     <div className="p-6 md:p-8 space-y-8">
@@ -37,7 +50,7 @@ export default async function DashboardPage() {
             <FileText className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">{totalPrompts}</div>
+            <div className="text-2xl font-bold">{stats.total}</div>
             <p className="text-xs text-muted-foreground">All your submitted prompts</p>
           </CardContent>
         </Card>
@@ -48,7 +61,7 @@ export default async function DashboardPage() {
             <CheckCircle className="h-4 w-4 text-green-500" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold text-green-500">{approvedPrompts}</div>
+            <div className="text-2xl font-bold text-green-500">{stats.approved}</div>
             <p className="text-xs text-muted-foreground">Live on the platform</p>
           </CardContent>
         </Card>
@@ -59,7 +72,7 @@ export default async function DashboardPage() {
             <Clock className="h-4 w-4 text-yellow-500" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold text-yellow-500">{pendingPrompts}</div>
+            <div className="text-2xl font-bold text-yellow-500">{stats.pending}</div>
             <p className="text-xs text-muted-foreground">Awaiting review</p>
           </CardContent>
         </Card>
@@ -70,7 +83,7 @@ export default async function DashboardPage() {
             <XCircle className="h-4 w-4 text-red-500" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold text-red-500">{rejectedPrompts}</div>
+            <div className="text-2xl font-bold text-red-500">{stats.rejected}</div>
             <p className="text-xs text-muted-foreground">Not approved</p>
           </CardContent>
         </Card>

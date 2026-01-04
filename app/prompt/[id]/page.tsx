@@ -4,6 +4,9 @@ import { Footer } from "@/components/footer"
 import { notFound } from "next/navigation"
 import { PromptDetail } from "@/components/prompt-detail"
 
+// Revalidate every 60 seconds for fresh content
+export const revalidate = 60
+
 interface PromptPageProps {
   params: Promise<{ id: string }>
 }
@@ -12,22 +15,31 @@ export default async function PromptPage({ params }: PromptPageProps) {
   const { id } = await params
   const supabase = await createClient()
 
-  // Get user
+  // Parallel data fetching to eliminate waterfall requests
+  const [userResult, promptResult] = await Promise.all([
+    supabase.auth.getUser(),
+    supabase.from("prompts").select("*").eq("id", id).single(),
+  ])
+
   const {
     data: { user },
-  } = await supabase.auth.getUser()
+  } = userResult
 
-  // Check if user is admin
+  // Check if user is admin (only if user exists)
   let isAdmin = false
   if (user) {
     const { data: profile } = await supabase.from("profiles").select("is_admin").eq("id", user.id).single()
     isAdmin = profile?.is_admin || false
   }
 
-  // Get prompt
-  const { data: prompt, error } = await supabase.from("prompts").select("*").eq("id", id).single()
+  const { data: prompt, error } = promptResult
 
   if (error || !prompt) {
+    notFound()
+  }
+
+  // Only show approved prompts to non-admin users
+  if (!isAdmin && prompt.status !== "approved") {
     notFound()
   }
 

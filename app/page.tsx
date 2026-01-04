@@ -3,26 +3,40 @@ import { Header } from "@/components/header"
 import { HomeClient } from "@/components/home-client"
 import { Footer } from "@/components/footer"
 
+// Revalidate every 60 seconds for fresh content while maintaining good performance
+export const revalidate = 60
+
 export default async function HomePage() {
   const supabase = await createClient()
+  
+  // Parallel data fetching to eliminate waterfall requests
+  const [userResult, promptsResult] = await Promise.all([
+    supabase.auth.getUser(),
+    supabase
+      .from("prompts")
+      .select("id, title, description, prompt_text, category, tags, image_url, profiles:created_by(username, is_admin)")
+      .eq("status", "approved")
+      .order("created_at", { ascending: false }),
+  ])
+
   const {
     data: { user },
-  } = await supabase.auth.getUser()
+  } = userResult
 
+  // Only fetch profile if user exists
   let isAdmin = false
   let username: string | undefined = undefined
   if (user) {
-    const { data: profile } = await supabase.from("profiles").select("is_admin, username").eq("id", user.id).single()
+    const { data: profile } = await supabase
+      .from("profiles")
+      .select("is_admin, username")
+      .eq("id", user.id)
+      .single()
     isAdmin = profile?.is_admin || false
     username = profile?.username || undefined
   }
 
-  const { data: prompts } = await supabase
-    .from("prompts")
-    .select("id, title, description, prompt_text, category, tags, image_url, profiles:created_by(username, is_admin)")
-    .eq("status", "approved")
-    .order("created_at", { ascending: false })
-
+  const { data: prompts } = promptsResult
   const categories = Array.from(new Set(prompts?.map((p) => p.category) || []))
 
   return (

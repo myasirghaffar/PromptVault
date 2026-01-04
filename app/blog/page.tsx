@@ -6,15 +6,20 @@ import { Badge } from "@/components/ui/badge"
 import { ArrowRight } from "lucide-react"
 import { Header } from "@/components/header"
 import { Footer } from "@/components/footer"
+import Image from "next/image"
 
 export const metadata = {
   title: "Blog - PromptVault",
   description: "Read our latest articles about AI prompts, tips, and best practices",
 }
 
+// Revalidate every 60 seconds for fresh content
+export const revalidate = 60
+
 export default async function BlogsPage() {
   const cookieStore = await cookies()
-  const supabase = createServerClient(process.env.NEXT_PUBLIC_SUPABASE_URL!, process.env.SUPABASE_SERVICE_ROLE_KEY!, {
+  // Use anon key instead of service role key for security
+  const supabase = createServerClient(process.env.NEXT_PUBLIC_SUPABASE_URL!, process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!, {
     cookies: {
       getAll() {
         return cookieStore.getAll()
@@ -71,10 +76,13 @@ export default async function BlogsPage() {
                       {/* Featured Image */}
                       {blog.featured_image && (
                         <div className="relative h-48 overflow-hidden bg-gradient-to-br from-purple-500/20 to-purple-600/20">
-                          <img
-                            src={blog.featured_image || "/placeholder.svg"}
+                          <Image
+                            src={blog.featured_image}
                             alt={blog.title}
-                            className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                            fill
+                            sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+                            className="object-cover group-hover:scale-105 transition-transform duration-300"
+                            loading="lazy"
                           />
                         </div>
                       )}

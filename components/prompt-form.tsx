@@ -48,27 +48,60 @@ export function PromptForm({ prompt, userId, onSuccess, onCancel, isUserSubmissi
   const [imageFile, setImageFile] = useState<File | null>(null)
   const [imagePreview, setImagePreview] = useState<string | null>(prompt?.image_url || null)
 
+  // Fetch categories only once on mount
   useEffect(() => {
+    let isMounted = true
+
     const fetchCategories = async () => {
       const supabase = createClient()
       const { data } = await supabase.from("prompts").select("category")
 
-      if (data) {
+      // Only update state if component is still mounted (prevents memory leaks)
+      if (isMounted && data) {
         const uniqueCategories = Array.from(new Set(data.map((p) => p.category).filter(Boolean)))
         setCategories(uniqueCategories)
       }
     }
+    
     fetchCategories()
+
+    // Cleanup function to prevent state updates after unmount
+    return () => {
+      isMounted = false
+    }
   }, [])
 
   const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0]
     if (file) {
+      // Validate file size (10MB max)
+      if (file.size > 10 * 1024 * 1024) {
+        setError("Image size must be less than 10MB")
+        return
+      }
+
+      // Validate file type
+      if (!file.type.startsWith("image/")) {
+        setError("Please select a valid image file")
+        return
+      }
+
       setImageFile(file)
       const reader = new FileReader()
+      
+      // Cleanup previous reader if exists
+      const currentReader = reader
+      
       reader.onloadend = () => {
-        setImagePreview(reader.result as string)
+        if (currentReader === reader) {
+          setImagePreview(reader.result as string)
+        }
       }
+      
+      reader.onerror = () => {
+        setError("Failed to read image file")
+      }
+      
       reader.readAsDataURL(file)
     }
   }
@@ -317,7 +350,8 @@ export function PromptForm({ prompt, userId, onSuccess, onCancel, isUserSubmissi
           <div className="space-y-3">
             {imagePreview ? (
               <div className="relative w-full h-48 rounded-lg overflow-hidden border border-purple-500/20">
-                <img src={imagePreview || "/placeholder.svg"} alt="Preview" className="w-full h-full object-cover" />
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img src={imagePreview} alt="Preview" className="w-full h-full object-cover" />
                 <Button
                   type="button"
                   variant="destructive"

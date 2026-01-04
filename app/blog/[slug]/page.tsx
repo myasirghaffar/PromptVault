@@ -7,10 +7,15 @@ import { Badge } from "@/components/ui/badge"
 import { ArrowLeft, Calendar, User } from "lucide-react"
 import { Header } from "@/components/header"
 import { Footer } from "@/components/footer"
+import Image from "next/image"
+
+// Revalidate every 60 seconds for fresh content
+export const revalidate = 60
 
 export async function generateMetadata({ params }: { params: { slug: string } }) {
   const cookieStore = await cookies()
-  const supabase = createServerClient(process.env.NEXT_PUBLIC_SUPABASE_URL!, process.env.SUPABASE_SERVICE_ROLE_KEY!, {
+  // Use anon key instead of service role key for security
+  const supabase = createServerClient(process.env.NEXT_PUBLIC_SUPABASE_URL!, process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!, {
     cookies: {
       getAll() {
         return cookieStore.getAll()
@@ -46,7 +51,8 @@ export async function generateMetadata({ params }: { params: { slug: string } })
 
 export default async function BlogDetailPage({ params }: { params: { slug: string } }) {
   const cookieStore = await cookies()
-  const supabase = createServerClient(process.env.NEXT_PUBLIC_SUPABASE_URL!, process.env.SUPABASE_SERVICE_ROLE_KEY!, {
+  // Use anon key instead of service role key for security
+  const supabase = createServerClient(process.env.NEXT_PUBLIC_SUPABASE_URL!, process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!, {
     cookies: {
       getAll() {
         return cookieStore.getAll()
@@ -68,6 +74,19 @@ export default async function BlogDetailPage({ params }: { params: { slug: strin
     notFound()
   }
 
+  // Get user info for header
+  const {
+    data: { user },
+  } = await supabase.auth.getUser()
+
+  let isAdmin = false
+  let username: string | undefined = undefined
+  if (user) {
+    const { data: profile } = await supabase.from("profiles").select("is_admin, username").eq("id", user.id).single()
+    isAdmin = profile?.is_admin || false
+    username = profile?.username || undefined
+  }
+
   const formattedDate = new Date(blog.created_at).toLocaleDateString("en-US", {
     year: "numeric",
     month: "long",
@@ -76,7 +95,7 @@ export default async function BlogDetailPage({ params }: { params: { slug: strin
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-background via-background to-purple-950/10 flex flex-col">
-      <Header />
+      <Header user={user} isAdmin={isAdmin} username={username} />
       <main className="min-h-screen flex-1">
         {/* Header */}
         <div className="border-b border-purple-500/20 bg-card/50 backdrop-blur sticky top-16 z-30">
@@ -95,11 +114,14 @@ export default async function BlogDetailPage({ params }: { params: { slug: strin
           <div className="max-w-4xl mx-auto">
             {/* Featured Image */}
             {blog.featured_image && (
-              <div className="mb-8 rounded-lg overflow-hidden border border-purple-500/20">
-                <img
-                  src={blog.featured_image || "/placeholder.svg"}
+              <div className="mb-8 rounded-lg overflow-hidden border border-purple-500/20 relative h-96">
+                <Image
+                  src={blog.featured_image}
                   alt={blog.title}
-                  className="w-full h-auto max-h-96 object-cover"
+                  fill
+                  sizes="(max-width: 768px) 100vw, (max-width: 1200px) 80vw, 896px"
+                  className="object-cover"
+                  priority
                 />
               </div>
             )}
