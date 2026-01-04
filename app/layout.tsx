@@ -7,6 +7,7 @@ import { SpeedInsights } from "@vercel/speed-insights/next"
 import "./globals.css"
 import { Suspense } from "react"
 import PWAInstallPrompt from "../components/pwa-install-prompt"
+import { ServiceWorkerRegister } from "../components/service-worker-register"
 
 export const metadata: Metadata = {
   title: "PromptVault - Discover Amazing AI Prompts",
@@ -74,6 +75,7 @@ export default function RootLayout({
         >
           {children}
         </Suspense>
+        <ServiceWorkerRegister />
         <PWAInstallPrompt />
         <Analytics />
         <SpeedInsights />
