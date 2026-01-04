@@ -48,7 +48,7 @@ export const Footer = memo(function Footer() {
 
           {/* Product */}
           <div className="space-y-4">
-            <h3 className="font-semibold text-foreground">Product</h3>
+            <h3 className="font-semibold text-foreground">Products</h3>
             <ul className="space-y-2">
               <li>
                 <button
