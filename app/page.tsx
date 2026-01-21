@@ -23,7 +23,22 @@ export default async function HomePage() {
     .eq("status", "approved")
     .order("created_at", { ascending: false })
 
-  const categories = Array.from(new Set(prompts?.map((p) => p.category) || []))
+  // Transform prompts to match the expected type structure
+  // Supabase returns profiles as an array, but we need it as a single object
+  const transformedPrompts = prompts?.map((prompt: any) => ({
+    id: prompt.id,
+    title: prompt.title,
+    description: prompt.description,
+    prompt_text: prompt.prompt_text,
+    category: prompt.category,
+    tags: prompt.tags,
+    image_url: prompt.image_url,
+    profiles: Array.isArray(prompt.profiles) 
+      ? (prompt.profiles[0] as { username?: string | null; is_admin?: boolean | null } | undefined) || undefined
+      : (prompt.profiles as { username?: string | null; is_admin?: boolean | null } | undefined) || undefined,
+  })) || []
+
+  const categories = Array.from(new Set(transformedPrompts.map((p) => p.category)))
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-purple-900/10 via-background to-purple-800/10 flex flex-col">
@@ -40,7 +55,7 @@ export default async function HomePage() {
           </p>
         </div>
 
-        <HomeClient prompts={prompts || []} categories={categories} />
+        <HomeClient prompts={transformedPrompts} categories={categories} />
       </main>
 
       <Footer />
