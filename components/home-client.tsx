@@ -87,10 +87,6 @@ export function HomeClient({ prompts, categories }: HomeClientProps) {
                 <PromptCard
                   key={prompt.id}
                   id={prompt.id}
-                  title={prompt.title}
-                  description={prompt.description}
-                  category={prompt.category}
-                  tags={prompt.tags}
                   imageUrl={prompt.image_url}
                   ownerName={ownerName}
                 />
