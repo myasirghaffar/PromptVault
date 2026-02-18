@@ -1,9 +1,10 @@
-"use client";
+"use client"
 
-import { Button } from "@/components/ui/button";
-import { createClient } from "@/lib/supabase/client";
-import Link from "next/link";
-import { useRouter, usePathname } from "next/navigation";
+import { useState, useCallback, useMemo } from "react"
+import { Button } from "@/components/ui/button"
+import { createClient } from "@/lib/supabase/client"
+import Link from "next/link"
+import { useRouter, usePathname } from "next/navigation"
 import {
   Sparkles,
   LogOut,
@@ -12,42 +13,46 @@ import {
   User,
   Menu,
   X,
-} from "lucide-react";
-import { useState } from "react";
+} from "lucide-react"
 
 interface HeaderProps {
-  user: { id: string; email?: string } | null;
-  isAdmin: boolean;
-  username?: string;
+  user: { id: string; email?: string } | null
+  isAdmin: boolean
+  username?: string
 }
 
 export function Header({ user, isAdmin, username }: HeaderProps) {
-  const router = useRouter();
-  const pathname = usePathname();
-  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const router = useRouter()
+  const pathname = usePathname()
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
 
   // Check if user is on dashboard screens
-  const isDashboardScreen =
+  const isDashboardScreen = useMemo(() => 
     pathname?.startsWith("/dashboard") ||
     pathname?.startsWith("/user") ||
-    pathname?.startsWith("/admin");
+    pathname?.startsWith("/admin"),
+    [pathname]
+  )
 
-  const handleLogout = async () => {
-    const supabase = createClient();
-    await supabase.auth.signOut();
-    // Redirect to home page after logout
-    router.push("/");
-    router.refresh();
-  };
+  const handleLogout = useCallback(async () => {
+    const supabase = createClient()
+    await supabase.auth.signOut()
+    router.push("/")
+    router.refresh()
+  }, [router])
 
-  const toggleSidebar = () => {
-    const sidebar = document.getElementById("sidebar");
-    const overlay = document.getElementById("sidebar-overlay");
+  const toggleSidebar = useCallback(() => {
+    const sidebar = document.getElementById("sidebar")
+    const overlay = document.getElementById("sidebar-overlay")
     if (sidebar && overlay) {
-      sidebar.classList.toggle("-translate-x-full");
-      overlay.classList.toggle("hidden");
+      sidebar.classList.toggle("-translate-x-full")
+      overlay.classList.toggle("hidden")
     }
-  };
+  }, [])
+
+  const toggleMobileMenu = useCallback(() => {
+    setIsMobileMenuOpen(prev => !prev)
+  }, [])
 
   return (
     <>
@@ -61,6 +66,7 @@ export function Header({ user, isAdmin, username }: HeaderProps) {
                 size="icon"
                 onClick={toggleSidebar}
                 className="md:hidden"
+                aria-label="Toggle sidebar menu"
               >
                 <Menu className="h-5 w-5" />
               </Button>
@@ -79,12 +85,9 @@ export function Header({ user, isAdmin, username }: HeaderProps) {
               </span>
             </Link>
           </div>
+          
           {/* Desktop Navigation */}
-          <nav
-            className="hidden md:flex items-center gap-2 md:gap-4"
-            role="navigation"
-            aria-label="Main navigation"
-          >
+          <nav className="hidden md:flex items-center gap-2 md:gap-4" role="navigation" aria-label="Main navigation">
             {/* Blog Link */}
             <Button
               asChild
@@ -164,7 +167,7 @@ export function Header({ user, isAdmin, username }: HeaderProps) {
               <Button
                 variant="ghost"
                 size="icon"
-                onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+                onClick={toggleMobileMenu}
                 aria-label="Toggle mobile menu"
                 aria-expanded={isMobileMenuOpen}
               >
@@ -187,7 +190,7 @@ export function Header({ user, isAdmin, username }: HeaderProps) {
                 asChild
                 variant="ghost"
                 className="w-full justify-start text-muted-foreground hover:text-foreground hover:bg-purple-500/10 cursor-pointer"
-                onClick={() => setIsMobileMenuOpen(false)}
+                onClick={toggleMobileMenu}
               >
                 <Link href="/blog" className="flex items-center gap-2">
                   <BookOpen className="h-4 w-4" />
@@ -199,7 +202,7 @@ export function Header({ user, isAdmin, username }: HeaderProps) {
                 asChild
                 variant="ghost"
                 className="w-full justify-start hover:bg-purple-500/10 cursor-pointer"
-                onClick={() => setIsMobileMenuOpen(false)}
+                onClick={toggleMobileMenu}
               >
                 <Link href="/auth/login" className="flex items-center gap-2">
                   <User className="h-4 w-4" />
@@ -211,5 +214,5 @@ export function Header({ user, isAdmin, username }: HeaderProps) {
         )}
       </header>
     </>
-  );
+  )
 }

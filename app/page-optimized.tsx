@@ -1,6 +1,6 @@
 import { createClient } from "@/lib/supabase/server";
-import { Header } from "@/components/header";
-import { HomeClient } from "@/components/home-client";
+import { Header } from "@/components/header-optimized";
+import { HomeClient } from "@/components/home-client-optimized";
 import { Footer } from "@/components/footer";
 import {
   generateMetadata as generateSEOMetadata,
@@ -30,6 +30,7 @@ export async function generateMetadata(): Promise<Metadata> {
     type: "website",
   });
 }
+
 export default async function HomePage() {
   const supabase = await createClient();
   const {

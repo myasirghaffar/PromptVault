@@ -7,47 +7,31 @@ import { SpeedInsights } from "@vercel/speed-insights/next";
 import "./globals.css";
 import { Suspense } from "react";
 import PWAInstallPrompt from "../components/pwa-install-prompt";
+import { generateMetadata, seoConfig } from "../lib/seo/metadata-builder";
+import { PageSEO } from "../components/SEO/PageSEO";
 
-export const metadata: Metadata = {
-  title: "PromptVault - Discover Amazing AI Prompts",
-  description:
-    "Browse our curated collection of high-quality prompts for ChatGPT, Midjourney, and more",
-  generator: "v0.app",
-  manifest: "/manifest.json",
-  appleWebApp: {
-    capable: true,
-    statusBarStyle: "default",
-    title: "PromptVault",
-  },
-  formatDetection: {
-    telephone: false,
-  },
-  openGraph: {
-    type: "website",
-    siteName: "PromptVault",
-    title: "PromptVault - Discover Amazing AI Prompts",
-    description:
-      "Browse our curated collection of high-quality prompts for ChatGPT, Midjourney, and more",
-  },
-  twitter: {
-    card: "summary",
-    title: "PromptVault - Discover Amazing AI Prompts",
-    description:
-      "Browse our curated collection of high-quality prompts for ChatGPT, Midjourney, and more",
-  },
-  icons: {
-    icon: "/icons/icon-192x192.svg",
-    shortcut: "/icons/icon-192x192.svg",
-    apple: "/icons/icon-192x192.svg",
-  },
-};
+export const metadata: Metadata = generateMetadata({
+  title: seoConfig.defaultTitle,
+  description: seoConfig.defaultDescription,
+  canonical: seoConfig.siteUrl,
+  keywords: [
+    "AI prompts",
+    "ChatGPT",
+    "Midjourney",
+    "Gemini",
+    "prompt engineering",
+    "AI tools",
+  ],
+  type: "website",
+});
 
 export const viewport: Viewport = {
   width: "device-width",
   initialScale: 1,
-  maximumScale: 1,
-  userScalable: false,
+  maximumScale: 5,
+  userScalable: true,
   themeColor: "#000000",
+  colorScheme: "dark",
 };
 
 export default function RootLayout({
@@ -75,6 +59,13 @@ export default function RootLayout({
           href="/icons/icon-192x192.svg"
         />
         <link rel="mask-icon" href="/icons/icon-192x192.svg" color="#000000" />
+        <link rel="preconnect" href="https://fonts.googleapis.com" />
+        <link
+          rel="preconnect"
+          href="https://fonts.gstatic.com"
+          crossOrigin="anonymous"
+        />
+        <PageSEO />
       </head>
       <body
         className={`font-sans ${GeistSans.variable} ${GeistMono.variable} antialiased flex flex-col min-h-screen`}

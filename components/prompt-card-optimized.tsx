@@ -1,17 +1,17 @@
-import { Card, CardContent } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
-import Link from "next/link";
-import Image from "next/image";
-import { Eye, User, ArrowRight } from "lucide-react";
+import Image from "next/image"
+import Link from "next/link"
+import { Badge } from "@/components/ui/badge"
+import { Card, CardContent } from "@/components/ui/card"
+import { Eye, User, ArrowRight } from "lucide-react"
 
 interface PromptCardProps {
-  id: string;
-  title: string;
-  description: string | null;
-  category: string;
-  tags: string[];
-  imageUrl: string | null;
-  ownerName?: string; //
+  id: string
+  title: string
+  description: string | null
+  category: string
+  tags: string[]
+  imageUrl: string | null
+  ownerName?: string
 }
 
 export function PromptCard({
@@ -21,7 +21,7 @@ export function PromptCard({
   category,
   tags,
   imageUrl,
-  ownerName,
+  ownerName
 }: PromptCardProps) {
   return (
     <Card className="h-full border-purple-500/20 bg-card/50 backdrop-blur hover:border-purple-500/40 transition-all cursor-pointer group overflow-hidden">
@@ -51,10 +51,7 @@ export function PromptCard({
         <CardContent className="p-6">
           <div className="space-y-3">
             {/* Category Badge */}
-            <Badge
-              variant="secondary"
-              className="text-xs bg-purple-500/10 text-purple-300 border-purple-500/20"
-            >
+            <Badge variant="secondary" className="text-xs bg-purple-500/10 text-purple-300 border-purple-500/20">
               {category}
             </Badge>
 
@@ -65,28 +62,19 @@ export function PromptCard({
 
             {/* Description */}
             {description && (
-              <p className="text-sm text-muted-foreground line-clamp-2">
-                {description}
-              </p>
+              <p className="text-sm text-muted-foreground line-clamp-2">{description}</p>
             )}
 
             {/* Tags */}
             {tags.length > 0 && (
               <div className="flex flex-wrap gap-1">
                 {tags.slice(0, 3).map((tag) => (
-                  <Badge
-                    key={tag}
-                    variant="outline"
-                    className="text-xs border-purple-500/20 text-purple-300"
-                  >
+                  <Badge key={tag} variant="outline" className="text-xs border-purple-500/20 text-purple-300">
                     {tag}
                   </Badge>
                 ))}
                 {tags.length > 3 && (
-                  <Badge
-                    variant="outline"
-                    className="text-xs border-purple-500/20 text-purple-300"
-                  >
+                  <Badge variant="outline" className="text-xs border-purple-500/20 text-purple-300">
                     +{tags.length - 3}
                   </Badge>
                 )}
@@ -107,5 +95,5 @@ export function PromptCard({
         </CardContent>
       </Link>
     </Card>
-  );
+  )
 }

@@ -28,7 +28,6 @@
 ## 🛠️ Tech Stack
 
 ### Frontend
-
 - **Next.js 15** - React framework with App Router
 - **TypeScript** - Type-safe development
 - **Tailwind CSS** - Utility-first styling
@@ -36,20 +35,17 @@
 - **Lucide React** - Beautiful icons
 
 ### Backend & Database
-
 - **Supabase** - Authentication and database
 - **PostgreSQL** - Primary database
 - **Server Components** - Optimized rendering
 
 ### SEO & Performance
-
 - **Next.js Metadata API** - Dynamic SEO metadata
 - **Structured Data** - JSON-LD schemas for rich snippets
 - **Next.js Image** - Optimized image delivery
 - **PWA Manifest** - Progressive Web App features
 
 ### Deployment
-
 - **Vercel** - Hosting and deployment
 - **Vercel Analytics** - Performance monitoring
 - **Vercel Speed Insights** - Core Web Vitals tracking
@@ -83,7 +79,6 @@ PromptVault/
 ## 🎯 SEO Features
 
 ### ✅ Implemented SEO Optimizations
-
 - **100% Metadata Coverage** - Dynamic metadata for all pages
 - **Structured Data** - Organization, Website, Article, FAQ schemas
 - **Canonical URLs** - Automatic canonical link generation
@@ -94,7 +89,6 @@ PromptVault/
 - **Core Web Vitals** - Optimized performance metrics
 
 ### 🤖 AI Search Optimization
-
 - **Semantic HTML5** - Proper document structure
 - **Clear Heading Hierarchy** - H1-H6 structure
 - **FAQ Schema** - Direct answer formatting
@@ -104,7 +98,6 @@ PromptVault/
 ## ⚡ Performance Features
 
 ### Core Web Vitals Optimization
-
 - **Next.js Image** - Lazy loading and optimization
 - **Font Preloading** - Critical font optimization
 - **React Performance Hooks** - useMemo, useCallback
@@ -112,7 +105,6 @@ PromptVault/
 - **Minimal Hydration** - Reduced client-side JavaScript
 
 ### Accessibility
-
 - **ARIA Labels** - Screen reader support
 - **Keyboard Navigation** - Full accessibility
 - **Semantic Elements** - Proper HTML5 structure
@@ -121,33 +113,29 @@ PromptVault/
 ## 🛠️ Getting Started
 
 ### Prerequisites
-
-- Node.js 18+
+- Node.js 18+ 
 - npm or yarn
 - Supabase account
 
 ### Installation
 
 1. **Clone the repository**
-
    ```bash
    git clone https://github.com/myasirghaffar/PromptVault.git
    cd PromptVault
    ```
 
 2. **Install dependencies**
-
    ```bash
    npm install
    ```
 
 3. **Set up environment variables**
-
    ```env
    # Supabase Configuration
    NEXT_PUBLIC_SUPABASE_URL=your_supabase_url
    SUPABASE_SERVICE_ROLE_KEY=your_service_role_key
-
+   
    # SEO Configuration
    NEXT_PUBLIC_SITE_URL=https://yourdomain.com
    GOOGLE_SITE_VERIFICATION=your_google_verification_code
@@ -160,7 +148,6 @@ PromptVault/
    - Set up storage buckets for images
 
 5. **Run development server**
-
    ```bash
    npm run dev
    ```
@@ -169,20 +156,18 @@ PromptVault/
 
 ## 📊 Environment Variables
 
-| Variable                    | Description                        | Required |
-| --------------------------- | ---------------------------------- | -------- |
-| `NEXT_PUBLIC_SUPABASE_URL`  | Supabase project URL               | ✅       |
-| `SUPABASE_SERVICE_ROLE_KEY` | Supabase service role key          | ✅       |
-| `NEXT_PUBLIC_SITE_URL`      | Production site URL                | ✅       |
-| `GOOGLE_SITE_VERIFICATION`  | Google Search Console verification | ❌       |
-| `YANDEX_VERIFICATION`       | Yandex Webmaster verification      | ❌       |
+| Variable | Description | Required |
+|----------|-------------|----------|
+| `NEXT_PUBLIC_SUPABASE_URL` | Supabase project URL | ✅ |
+| `SUPABASE_SERVICE_ROLE_KEY` | Supabase service role key | ✅ |
+| `NEXT_PUBLIC_SITE_URL` | Production site URL | ✅ |
+| `GOOGLE_SITE_VERIFICATION` | Google Search Console verification | ❌ |
+| `YANDEX_VERIFICATION` | Yandex Webmaster verification | ❌ |
 
 ## 🚀 Deployment
 
 ### Vercel Deployment
-
 1. **Push to GitHub**
-
    ```bash
    git add .
    git commit -m "Deploy PromptVault"
@@ -195,7 +180,6 @@ PromptVault/
    - Deploy automatically
 
 ### Environment Setup
-
 1. **Configure domain** in Vercel dashboard
 2. **Set up SSL** certificate
 3. **Submit sitemap** to Google Search Console
@@ -204,14 +188,12 @@ PromptVault/
 ## 📈 SEO Performance
 
 ### Expected Scores
-
 - **Lighthouse SEO**: 95-100
 - **Lighthouse Performance**: 90-95
 - **Lighthouse Accessibility**: 95-100
 - **Core Web Vitals**: All green
 
 ### Monitoring Tools
-
 - **Google Search Console** - Search performance
 - **Vercel Analytics** - User analytics
 - **Vercel Speed Insights** - Core Web Vitals
@@ -248,7 +230,6 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 ## 📞 Support
 
 For support and questions:
-
 - 📧 **Email**: support@promptvault.dev
 - 🐛 **Issues**: [GitHub Issues](https://github.com/myasirghaffar/PromptVault/issues)
 - 💬 **Discussions**: [GitHub Discussions](https://github.com/myasirghaffar/PromptVault/discussions)

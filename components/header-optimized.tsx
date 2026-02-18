@@ -1,4 +1,4 @@
-"use client";
+"use client"
 
 import { Button } from "@/components/ui/button";
 import { createClient } from "@/lib/supabase/client";
@@ -61,6 +61,7 @@ export function Header({ user, isAdmin, username }: HeaderProps) {
                 size="icon"
                 onClick={toggleSidebar}
                 className="md:hidden"
+                aria-label="Toggle sidebar menu"
               >
                 <Menu className="h-5 w-5" />
               </Button>
@@ -79,12 +80,9 @@ export function Header({ user, isAdmin, username }: HeaderProps) {
               </span>
             </Link>
           </div>
+          
           {/* Desktop Navigation */}
-          <nav
-            className="hidden md:flex items-center gap-2 md:gap-4"
-            role="navigation"
-            aria-label="Main navigation"
-          >
+          <nav className="hidden md:flex items-center gap-2 md:gap-4" role="navigation" aria-label="Main navigation">
             {/* Blog Link */}
             <Button
               asChild

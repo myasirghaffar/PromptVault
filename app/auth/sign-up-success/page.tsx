@@ -1,8 +1,47 @@
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
-import Link from "next/link"
-import { Button } from "@/components/ui/button"
+"use client";
+
+import { useEffect } from "react";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import Link from "next/link";
+import { Button } from "@/components/ui/button";
+import { useRouter } from "next/navigation";
+import { createClient } from "@/lib/supabase/client";
 
 export default function SignUpSuccessPage() {
+  const router = useRouter();
+
+  // Check if user is already logged in
+  useEffect(() => {
+    const checkAuth = async () => {
+      const supabase = createClient();
+      const {
+        data: { user },
+      } = await supabase.auth.getUser();
+
+      if (user) {
+        // User is already logged in, redirect to appropriate dashboard
+        const { data: profile } = await supabase
+          .from("profiles")
+          .select("is_admin")
+          .eq("id", user.id)
+          .single();
+
+        if (profile?.is_admin) {
+          router.push("/admin/dashboard");
+        } else {
+          router.push("/user/dashboard");
+        }
+      }
+    };
+
+    checkAuth();
+  }, [router]);
   return (
     <div className="flex min-h-screen w-full items-center justify-center p-6 bg-gradient-to-br from-purple-900/20 via-background to-purple-800/20">
       <div className="w-full max-w-sm">
@@ -11,11 +50,14 @@ export default function SignUpSuccessPage() {
             <CardTitle className="text-2xl bg-gradient-to-r from-purple-400 to-purple-600 bg-clip-text text-transparent">
               Check your email
             </CardTitle>
-            <CardDescription>We&apos;ve sent you a confirmation link</CardDescription>
+            <CardDescription>
+              We&apos;ve sent you a confirmation link
+            </CardDescription>
           </CardHeader>
           <CardContent className="space-y-4">
             <p className="text-sm text-muted-foreground">
-              Please check your email and click the confirmation link to activate your account before signing in.
+              Please check your email and click the confirmation link to
+              activate your account before signing in.
             </p>
             <Button
               asChild
@@ -27,5 +69,5 @@ export default function SignUpSuccessPage() {
         </Card>
       </div>
     </div>
-  )
+  );
 }
