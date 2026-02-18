@@ -1,35 +1,45 @@
-import { createServerClient } from "@supabase/ssr"
-import { cookies } from "next/headers"
-import Link from "next/link"
-import { notFound } from "next/navigation"
-import { Button } from "@/components/ui/button"
-import { Badge } from "@/components/ui/badge"
-import { ArrowLeft, Calendar, User } from "lucide-react"
-import { Header } from "@/components/header"
-import { Footer } from "@/components/footer"
+import { createServerClient } from "@supabase/ssr";
+import { cookies } from "next/headers";
+import Link from "next/link";
+import { notFound } from "next/navigation";
+import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
+import { ArrowLeft, Calendar, User } from "lucide-react";
+import { Header } from "@/components/header";
+import { Footer } from "@/components/footer";
 
-export async function generateMetadata({ params }: { params: { slug: string } }) {
-  const cookieStore = await cookies()
-  const supabase = createServerClient(process.env.NEXT_PUBLIC_SUPABASE_URL!, process.env.SUPABASE_SERVICE_ROLE_KEY!, {
-    cookies: {
-      getAll() {
-        return cookieStore.getAll()
-      },
-      setAll(cookiesToSet) {
-        cookiesToSet.forEach(({ name, value, options }) => cookieStore.set(name, value, options))
+export async function generateMetadata({
+  params,
+}: {
+  params: { slug: string };
+}) {
+  const cookieStore = await cookies();
+  const supabase = createServerClient(
+    process.env.NEXT_PUBLIC_SUPABASE_URL!,
+    process.env.SUPABASE_SERVICE_ROLE_KEY!,
+    {
+      cookies: {
+        getAll() {
+          return cookieStore.getAll();
+        },
+        setAll(cookiesToSet) {
+          cookiesToSet.forEach(({ name, value, options }) =>
+            cookieStore.set(name, value, options),
+          );
+        },
       },
     },
-  })
+  );
 
   const { data: blog } = await supabase
     .from("blogs")
     .select("*")
     .eq("slug", params.slug)
     .eq("status", "published")
-    .single()
+    .single();
 
   if (!blog) {
-    return { title: "Blog Not Found" }
+    return { title: "Blog Not Found" };
   }
 
   return {
@@ -41,42 +51,69 @@ export async function generateMetadata({ params }: { params: { slug: string } })
       description: blog.description,
       images: blog.featured_image ? [{ url: blog.featured_image }] : [],
     },
-  }
+  };
 }
 
-export default async function BlogDetailPage({ params }: { params: { slug: string } }) {
-  const cookieStore = await cookies()
-  const supabase = createServerClient(process.env.NEXT_PUBLIC_SUPABASE_URL!, process.env.SUPABASE_SERVICE_ROLE_KEY!, {
-    cookies: {
-      getAll() {
-        return cookieStore.getAll()
-      },
-      setAll(cookiesToSet) {
-        cookiesToSet.forEach(({ name, value, options }) => cookieStore.set(name, value, options))
+export default async function BlogDetailPage({
+  params,
+}: {
+  params: { slug: string };
+}) {
+  const cookieStore = await cookies();
+  const supabase = createServerClient(
+    process.env.NEXT_PUBLIC_SUPABASE_URL!,
+    process.env.SUPABASE_SERVICE_ROLE_KEY!,
+    {
+      cookies: {
+        getAll() {
+          return cookieStore.getAll();
+        },
+        setAll(cookiesToSet) {
+          cookiesToSet.forEach(({ name, value, options }) =>
+            cookieStore.set(name, value, options),
+          );
+        },
       },
     },
-  })
+  );
 
   const { data: blog } = await supabase
     .from("blogs")
     .select("*, profiles:author_id(username,is_admin)")
     .eq("slug", params.slug)
     .eq("status", "published")
-    .single()
+    .single();
 
   if (!blog) {
-    notFound()
+    notFound();
+  }
+
+  // Get user data for header
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+
+  let isAdmin = false;
+  let username: string | undefined = undefined;
+  if (user) {
+    const { data: profile } = await supabase
+      .from("profiles")
+      .select("is_admin, username")
+      .eq("id", user.id)
+      .single();
+    isAdmin = profile?.is_admin || false;
+    username = profile?.username || undefined;
   }
 
   const formattedDate = new Date(blog.created_at).toLocaleDateString("en-US", {
     year: "numeric",
     month: "long",
     day: "numeric",
-  })
+  });
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-background via-background to-purple-950/10 flex flex-col">
-      <Header />
+      <Header user={user} isAdmin={isAdmin} username={username} />
       <main className="min-h-screen flex-1">
         {/* Header */}
         <div className="border-b border-purple-500/20 bg-card/50 backdrop-blur sticky top-16 z-30">
@@ -105,7 +142,9 @@ export default async function BlogDetailPage({ params }: { params: { slug: strin
             )}
 
             {/* Title */}
-            <h1 className="text-4xl md:text-5xl font-bold mb-4 text-balance">{blog.title}</h1>
+            <h1 className="text-4xl md:text-5xl font-bold mb-4 text-balance">
+              {blog.title}
+            </h1>
 
             {/* Meta Info */}
             <div className="flex flex-wrap items-center gap-4 mb-8 pb-8 border-b border-purple-500/20">
@@ -131,7 +170,9 @@ export default async function BlogDetailPage({ params }: { params: { slug: strin
             )}
 
             {/* Description */}
-            <p className="text-lg text-muted-foreground mb-8">{blog.description}</p>
+            <p className="text-lg text-muted-foreground mb-8">
+              {blog.description}
+            </p>
 
             {/* Content */}
             <div
@@ -142,7 +183,10 @@ export default async function BlogDetailPage({ params }: { params: { slug: strin
             {/* Back Link */}
             <div className="pt-8 border-t border-purple-500/20">
               <Link href="/blog">
-                <Button variant="outline" className="gap-2 cursor-pointer bg-transparent">
+                <Button
+                  variant="outline"
+                  className="gap-2 cursor-pointer bg-transparent"
+                >
                   <ArrowLeft className="h-4 w-4" />
                   Back to All Blogs
                 </Button>
@@ -153,5 +197,5 @@ export default async function BlogDetailPage({ params }: { params: { slug: strin
       </main>
       <Footer />
     </div>
-  )
+  );
 }
