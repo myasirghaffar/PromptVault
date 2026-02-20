@@ -52,7 +52,7 @@ export function PromptDetail({ prompt }: PromptDetailProps) {
     }
   };
 
-  const openInChatGPT = () => {
+  const openInAssistant = () => {
     const encodedPrompt = encodeURIComponent(prompt.prompt_text);
     window.open(`https://chat.openai.com/?q=${encodedPrompt}`, "_blank");
   };
@@ -80,6 +80,7 @@ export function PromptDetail({ prompt }: PromptDetailProps) {
                 alt={prompt.title}
                 fill
                 className="object-cover object-top"
+                unoptimized={prompt.image_url?.startsWith("http")}
               />
             </div>
           </Card>
@@ -207,12 +208,12 @@ export function PromptDetail({ prompt }: PromptDetailProps) {
               </Button>
 
               <Button
-                onClick={openInChatGPT}
+                onClick={openInAssistant}
                 variant="outline"
                 className="border-purple-500/30 hover:bg-purple-500/10 hover:border-purple-500/50 flex-1 sm:flex-none bg-transparent"
               >
                 <ExternalLink className="h-4 w-4 mr-2" />
-                Open in ChatGPT
+                Open in AI Assistant
               </Button>
 
               <Button

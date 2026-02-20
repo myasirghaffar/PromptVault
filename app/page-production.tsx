@@ -9,11 +9,11 @@ import type { Metadata } from "next"
 export async function generateMetadata(): Promise<Metadata> {
   return generateSEOMetadata({
     title: "Discover Amazing AI Prompts",
-    description: "Browse our curated collection of high-quality prompts for ChatGPT, Midjourney, Gemini and more AI tools. Find the perfect prompt for your next AI project.",
+    description: "Browse our curated collection of high-quality prompts for modern AI assistants, Midjourney, Gemini and more AI tools. Find the perfect prompt for your next AI project.",
     canonical: generateCanonicalUrl(""),
     keywords: [
       "AI prompts",
-      "ChatGPT prompts", 
+      "AI assistant prompts", 
       "Midjourney prompts",
       "Gemini prompts",
       "prompt engineering",
@@ -68,11 +68,11 @@ export default async function HomePage() {
     <>
       <PageSEO
         title="Discover Amazing AI Prompts"
-        description="Browse our curated collection of high-quality prompts for ChatGPT, Midjourney, Gemini and more AI tools. Find the perfect prompt for your next AI project."
+        description="Browse our curated collection of high-quality prompts for modern AI assistants, Midjourney, Gemini and more AI tools. Find the perfect prompt for your next AI project."
         canonical={generateCanonicalUrl("")}
         keywords={[
           "AI prompts",
-          "ChatGPT prompts", 
+          "AI assistant prompts", 
           "Midjourney prompts",
           "Gemini prompts",
           "prompt engineering",
@@ -96,7 +96,7 @@ export default async function HomePage() {
             Discover Amazing AI Prompts
           </h1>
           <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
-            Browse our curated collection of high-quality prompts for ChatGPT, Midjourney, Gemini and more AI tools
+            Browse our curated collection of high-quality prompts for modern AI assistants, Midjourney, Gemini and more AI tools
           </p>
         </section>
 

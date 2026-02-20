@@ -1,96 +1,97 @@
-import { MetadataRoute } from 'next'
+import type { MetadataRoute } from "next";
+import { seoConfig } from "@/lib/seo/metadata-builder";
 
 export default function robots(): MetadataRoute.Robots {
-  const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://promptvault.vercel.app'
+  const baseUrl = seoConfig.siteUrl;
 
   return {
     rules: [
       {
-        userAgent: '*',
-        allow: '/',
+        userAgent: "*",
+        allow: ["/", "/blog", "/prompt", "/documentation", "/faq", "/contact"],
         disallow: [
-          '/admin/',
-          '/dashboard/',
-          '/user/',
-          '/api/',
-          '/auth/',
-          '/_next/',
-          '/static/',
-          '/*.json$',
-          '/sitemap.xml'
-        ]
-      },
-      {
-        userAgent: 'Googlebot',
-        allow: '/',
-        disallow: [
-          '/admin/',
-          '/dashboard/',
-          '/user/',
-          '/api/',
-          '/auth/',
-          '/_next/',
-          '/static/'
+          "/admin/",
+          "/dashboard/",
+          "/user/",
+          "/api/",
+          "/auth/",
+          "/_next/",
+          "/static/",
+          "/manifest",
+          "/*.json$",
         ],
-        crawlDelay: 1
       },
       {
-        userAgent: 'GPTBot',
-        allow: '/',
+        userAgent: "Googlebot",
+        allow: ["/", "/blog", "/prompt", "/documentation", "/faq", "/contact"],
         disallow: [
-          '/admin/',
-          '/dashboard/',
-          '/user/',
-          '/api/',
-          '/auth/'
-        ]
+          "/admin/",
+          "/dashboard/",
+          "/user/",
+          "/api/",
+          "/auth/",
+          "/_next/",
+          "/static/",
+        ],
+        crawlDelay: 1,
       },
       {
-        userAgent: 'ChatGPT-User',
-        allow: '/',
+        userAgent: "GPTBot",
+        allow: "/",
         disallow: [
-          '/admin/',
-          '/dashboard/',
-          '/user/',
-          '/api/',
-          '/auth/'
-        ]
+          "/admin/",
+          "/dashboard/",
+          "/user/",
+          "/api/",
+          "/auth/",
+        ],
       },
       {
-        userAgent: 'CCBot',
-        allow: '/',
+        userAgent: "AI-Assistant-User",
+        allow: "/",
         disallow: [
-          '/admin/',
-          '/dashboard/',
-          '/user/',
-          '/api/',
-          '/auth/'
-        ]
+          "/admin/",
+          "/dashboard/",
+          "/user/",
+          "/api/",
+          "/auth/",
+        ],
       },
       {
-        userAgent: 'anthropic-ai',
-        allow: '/',
+        userAgent: "CCBot",
+        allow: "/",
         disallow: [
-          '/admin/',
-          '/dashboard/',
-          '/user/',
-          '/api/',
-          '/auth/'
-        ]
+          "/admin/",
+          "/dashboard/",
+          "/user/",
+          "/api/",
+          "/auth/",
+        ],
       },
       {
-        userAgent: 'Claude-Web',
-        allow: '/',
+        userAgent: "anthropic-ai",
+        allow: "/",
         disallow: [
-          '/admin/',
-          '/dashboard/',
-          '/user/',
-          '/api/',
-          '/auth/'
-        ]
-      }
+          "/admin/",
+          "/dashboard/",
+          "/user/",
+          "/api/",
+          "/auth/",
+        ],
+      },
+      {
+        userAgent: "Claude-Web",
+        allow: "/",
+        disallow: [
+          "/admin/",
+          "/dashboard/",
+          "/user/",
+          "/api/",
+          "/auth/",
+        ],
+      },
     ],
     sitemap: `${baseUrl}/sitemap.xml`,
-    host: baseUrl
-  }
+    host: baseUrl,
+  };
 }

@@ -19,7 +19,7 @@ export function Footer() {
               </span>
             </div>
             <p className="text-sm text-muted-foreground">
-              Discover and share the best AI prompts for ChatGPT, Gemini, and
+              Discover and share the best AI prompts for Gemini, Claude, and
               more.
             </p>
           </div>
@@ -65,6 +65,22 @@ export function Footer() {
                   className="text-sm text-muted-foreground hover:text-purple-300 transition cursor-pointer"
                 >
                   Articles
+                </Link>
+              </li>
+              <li>
+                <Link
+                  href="/ai-prompt-manager"
+                  className="text-sm text-muted-foreground hover:text-purple-300 transition cursor-pointer"
+                >
+                  AI Prompt Manager
+                </Link>
+              </li>
+              <li>
+                <Link
+                  href="/ai-prompt-organizer"
+                  className="text-sm text-muted-foreground hover:text-purple-300 transition cursor-pointer"
+                >
+                  AI Prompt Organizer
                 </Link>
               </li>
               <li>

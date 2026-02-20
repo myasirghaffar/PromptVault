@@ -11,6 +11,7 @@ import { createClient } from "@/lib/supabase/client"
 import { Loader2, Upload, X } from "lucide-react"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { useRouter } from "next/navigation"
+import Image from "next/image"
 
 interface Prompt {
   id: string
@@ -317,7 +318,14 @@ export function PromptForm({ prompt, userId, onSuccess, onCancel, isUserSubmissi
           <div className="space-y-3">
             {imagePreview ? (
               <div className="relative w-full h-48 rounded-lg overflow-hidden border border-purple-500/20">
-                <img src={imagePreview || "/placeholder.svg"} alt="Preview" className="w-full h-full object-cover" />
+                <Image
+                  src={imagePreview || "/icons/icon-512x512.svg"}
+                  alt={`${title || "Prompt"} image preview`}
+                  fill
+                  sizes="(max-width: 768px) 100vw, 768px"
+                  className="w-full h-full object-cover"
+                  unoptimized={imagePreview.startsWith("data:")}
+                />
                 <Button
                   type="button"
                   variant="destructive"

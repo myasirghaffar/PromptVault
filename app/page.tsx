@@ -4,29 +4,35 @@ import { HomeClient } from "@/components/home-client";
 import { Footer } from "@/components/footer";
 import {
   generateMetadata as generateSEOMetadata,
-  generateCanonicalUrl,
+  generateAutoSEOContent,
 } from "@/lib/seo/metadata-builder";
 import { PageSEO } from "@/components/SEO/PageSEO";
 import type { Metadata } from "next";
+import Image from "next/image";
+import Link from "next/link";
 
 export async function generateMetadata(): Promise<Metadata> {
-  return generateSEOMetadata({
-    title: "Discover Amazing AI Prompts",
+  const seo = generateAutoSEOContent({
+    pathname: "/",
+    title: "AI Prompt Manager and AI Prompt Organizer",
     description:
-      "Browse our curated collection of high-quality prompts for ChatGPT, Midjourney, Gemini and more AI tools. Find the perfect prompt for your next AI project.",
-    canonical: generateCanonicalUrl(""),
+      "Use PromptVault as your AI prompt manager, AI prompt organizer, and reusable prompts system for teams and creators.",
+    h1: "AI Prompt Manager for High-Performing AI Workflows",
     keywords: [
-      "AI prompts",
-      "ChatGPT prompts",
-      "Midjourney prompts",
-      "Gemini prompts",
-      "prompt engineering",
-      "AI tools",
-      "artificial intelligence",
-      "machine learning prompts",
-      "AI assistant",
-      "prompt templates",
+      "ai prompt manager",
+      "ai prompt organizer",
+      "save ai prompts",
+      "prompt productivity tool",
+      "reusable prompts system",
     ],
+  });
+
+  return generateSEOMetadata({
+    pathname: "/",
+    title: seo.title,
+    description: seo.description,
+    h1: seo.h1,
+    keywords: seo.keywords,
     type: "website",
   });
 }
@@ -83,22 +89,28 @@ export default async function HomePage() {
   return (
     <>
       <PageSEO
-        title="Discover Amazing AI Prompts"
-        description="Browse our curated collection of high-quality prompts for ChatGPT, Midjourney, Gemini and more AI tools. Find the perfect prompt for your next AI project."
-        canonical={generateCanonicalUrl("")}
+        title="AI Prompt Manager and AI Prompt Organizer"
+        description="Use PromptVault as your AI prompt manager, AI prompt organizer, and reusable prompts system for teams and creators."
+        canonical="/"
         keywords={[
-          "AI prompts",
-          "ChatGPT prompts",
-          "Midjourney prompts",
-          "Gemini prompts",
-          "prompt engineering",
-          "AI tools",
-          "artificial intelligence",
-          "machine learning prompts",
-          "AI assistant",
-          "prompt templates",
+          "ai prompt manager",
+          "ai prompt organizer",
+          "save ai prompts",
+          "prompt productivity tool",
+          "reusable prompts system",
         ]}
-        breadcrumbs={[{ name: "Home", url: generateCanonicalUrl("") }]}
+        breadcrumbs={[{ name: "Home", url: "/" }]}
+        productData={{
+          name: "PromptVault Prompt Manager",
+          description:
+            "SaaS prompt manager for organizing, saving, and sharing reusable prompts.",
+          category: "Software",
+          tags: [
+            "prompt manager",
+            "ai prompt manager",
+            "ai prompt organizer",
+          ],
+        }}
       />
       <div className="min-h-screen bg-gradient-to-br from-purple-900/10 via-background to-purple-800/10 flex flex-col">
         <Header user={user} isAdmin={isAdmin} username={username} />
@@ -106,13 +118,72 @@ export default async function HomePage() {
         <main className="container mx-auto px-4 py-12 flex-1">
           {/* Hero Section */}
           <section className="text-center mb-12 space-y-4">
+            <div className="mx-auto relative w-20 h-20 mb-4">
+              <Image
+                src="/icons/icon-512x512.svg"
+                alt="PromptVault prompt manager logo"
+                fill
+                priority
+                sizes="80px"
+                className="object-contain"
+              />
+            </div>
             <h1 className="text-5xl md:text-6xl font-bold bg-gradient-to-r from-purple-400 via-purple-500 to-purple-600 bg-clip-text text-transparent animate-fade-in">
-              Discover Amazing AI Prompts
+              AI Prompt Manager for High-Performing AI Workflows
             </h1>
             <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
-              Browse our curated collection of high-quality prompts for ChatGPT,
-              Midjourney, Gemini and more AI tools
+              Organize, save, and reuse prompts with an AI prompt organizer
+              designed for creators, teams, and growth-focused SaaS workflows.
             </p>
+            <p className="text-base text-muted-foreground max-w-3xl mx-auto">
+              Need practical guidance? Explore our{" "}
+              <Link href="/blog" className="text-purple-400 hover:text-purple-300">
+                prompt engineering tutorials
+              </Link>{" "}
+              and discover feature walkthroughs in{" "}
+              <Link
+                href="/documentation"
+                className="text-purple-400 hover:text-purple-300"
+              >
+                documentation
+              </Link>
+              .
+            </p>
+            <nav
+              aria-label="Core prompt management topics"
+              className="pt-2 flex flex-wrap justify-center gap-4 text-sm"
+            >
+              <Link
+                href="/ai-prompt-manager"
+                className="text-purple-400 hover:text-purple-300"
+              >
+                AI prompt manager
+              </Link>
+              <Link
+                href="/ai-prompt-organizer"
+                className="text-purple-400 hover:text-purple-300"
+              >
+                AI prompt organizer
+              </Link>
+              <Link
+                href="/save-ai-prompts"
+                className="text-purple-400 hover:text-purple-300"
+              >
+                Save AI prompts
+              </Link>
+              <Link
+                href="/prompt-productivity-tool"
+                className="text-purple-400 hover:text-purple-300"
+              >
+                Prompt productivity tool
+              </Link>
+              <Link
+                href="/reusable-prompts-system"
+                className="text-purple-400 hover:text-purple-300"
+              >
+                Reusable prompts system
+              </Link>
+            </nav>
           </section>
 
           <HomeClient prompts={transformedPrompts} categories={categories} />

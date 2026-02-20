@@ -11,10 +11,10 @@
 
 ### ✨ Key Features
 
-- 🔍 **Curated AI Prompts** - High-quality prompts for ChatGPT, Midjourney, Gemini, and more
+- 🔍 **Curated AI Prompts** - High-quality prompts for Gemini, Midjourney, Claude, and more
 - 🎯 **SEO Optimized** - 100% Lighthouse SEO score with structured data
 - ⚡ **Core Web Vitals Ready** - Optimized for performance and user experience
-- 🤖 **AI Search Friendly** - Optimized for ChatGPT, Google AI Overviews, and other AI crawlers
+- 🤖 **AI Search Friendly** - Optimized for AI assistants, Google AI Overviews, and other AI crawlers
 - 📱 **PWA Ready** - Progressive Web App with offline capabilities
 - 🎨 **Beautiful UI** - Modern, responsive design with dark theme
 - 🔐 **User Authentication** - Secure login with Supabase

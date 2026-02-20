@@ -41,6 +41,7 @@ export default async function MyPromptsPage() {
                       alt={prompt.title}
                       fill
                       className="object-cover group-hover:scale-105 transition-transform duration-300"
+                      unoptimized={prompt.image_url?.startsWith("http")}
                     />
                   </div>
                 )}

@@ -58,7 +58,7 @@ This document outlines the PWA setup for PromptVault, including all the necessar
 {
   "name": "PromptVault - AI Prompts Collection",
   "short_name": "PromptVault",
-  "description": "Discover and share amazing AI prompts for ChatGPT, Midjourney, and more",
+  "description": "Discover and share amazing AI prompts for modern AI assistants, Midjourney, and more",
   "start_url": "/",
   "display": "standalone",
   "background_color": "#000000",

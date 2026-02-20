@@ -10,26 +10,31 @@ import {
 } from "@/components/ui/accordion";
 import {
   generateMetadata as generateSEOMetadata,
-  generateCanonicalUrl,
+  generateAutoSEOContent,
 } from "@/lib/seo/metadata-builder";
 import { PageSEO } from "@/components/SEO/PageSEO";
 import type { Metadata } from "next";
 
 export async function generateMetadata(): Promise<Metadata> {
-  return generateSEOMetadata({
-    title: "Frequently Asked Questions - PromptVault",
+  const seo = generateAutoSEOContent({
+    pathname: "/faq",
+    title: "PromptVault FAQ",
     description:
-      "Find answers to common questions about PromptVault, AI prompts, and how to get the most out of our curated prompt collection.",
-    canonical: generateCanonicalUrl("faq"),
+      "Find answers about PromptVault, AI prompt workflows, account setup, and prompt submission best practices.",
+    h1: "PromptVault Frequently Asked Questions",
     keywords: [
-      "FAQ",
-      "frequently asked questions",
-      "PromptVault help",
-      "AI prompts guide",
-      "prompt engineering questions",
-      "ChatGPT help",
-      "AI tools support",
+      "promptvault faq",
+      "ai prompt questions",
+      "ai prompt support",
     ],
+  });
+
+  return generateSEOMetadata({
+    pathname: "/faq",
+    title: seo.title,
+    description: seo.description,
+    h1: seo.h1,
+    keywords: seo.keywords,
     type: "website",
   });
 }
@@ -73,7 +78,7 @@ export default async function FAQPage() {
     {
       question: "What is PromptVault?",
       answer:
-        "PromptVault is a curated collection of high-quality AI prompts designed to help you get the best results from AI tools like ChatGPT, Gemini, Midjourney, and more. We help you find the perfect prompts to achieve your goals.",
+        "PromptVault is a curated collection of high-quality AI prompts designed to help you get the best results from modern AI tools like Gemini, Midjourney, Claude, and more. We help you find the perfect prompts to achieve your goals.",
     },
     {
       question: "How do I use a prompt?",
@@ -93,7 +98,7 @@ export default async function FAQPage() {
     {
       question: "What AI tools are supported?",
       answer:
-        "Our prompts work with various AI tools including ChatGPT, GPT-4, Claude, Midjourney, DALL-E, Gemini, and other popular AI assistants and image generators.",
+        "Our prompts work with various AI tools including GPT-4, Claude, Midjourney, DALL-E, Gemini, and other popular AI assistants and image generators.",
     },
     {
       question: "How long does it take for my prompt to be approved?",
@@ -110,21 +115,17 @@ export default async function FAQPage() {
   return (
     <>
       <PageSEO
-        title="Frequently Asked Questions - PromptVault"
-        description="Find answers to common questions about PromptVault, AI prompts, and how to get the most out of our curated prompt collection."
-        canonical={generateCanonicalUrl("faq")}
+        title="PromptVault Frequently Asked Questions"
+        description="Find answers about PromptVault, AI prompt workflows, account setup, and prompt submission best practices."
+        canonical="/faq"
         keywords={[
-          "FAQ",
-          "frequently asked questions",
-          "PromptVault help",
-          "AI prompts guide",
-          "prompt engineering questions",
-          "ChatGPT help",
-          "AI tools support",
+          "promptvault faq",
+          "ai prompt questions",
+          "ai prompt support",
         ]}
         breadcrumbs={[
-          { name: "Home", url: generateCanonicalUrl("") },
-          { name: "FAQ", url: generateCanonicalUrl("faq") },
+          { name: "Home", url: "/" },
+          { name: "FAQ", url: "/faq" },
         ]}
         faqs={faqs}
       />

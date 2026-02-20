@@ -9,10 +9,13 @@ import { Header } from "@/components/header";
 import { Footer } from "@/components/footer";
 import {
   generateMetadata as generateSEOMetadata,
-  generateCanonicalUrl,
+  generateAutoSEOContent,
 } from "@/lib/seo/metadata-builder";
 import { PageSEO } from "@/components/SEO/PageSEO";
 import type { Metadata } from "next";
+import Image from "next/image";
+import { autoInternalLinkHtmlContent } from "@/lib/seo/internal-linking";
+import { generateImageAltText } from "@/lib/seo/image-seo";
 
 export async function generateMetadata({
   params,
@@ -46,17 +49,30 @@ export async function generateMetadata({
 
   if (!blog) {
     return generateSEOMetadata({
+      pathname: `/blog/${params.slug}`,
       title: "Blog Not Found",
       description: "The requested blog post could not be found.",
-      canonical: generateCanonicalUrl(`blog/${params.slug}`),
+      noindex: true,
     });
   }
 
-  return generateSEOMetadata({
+  const seo = generateAutoSEOContent({
+    pathname: `/blog/${params.slug}`,
     title: blog.title,
     description: blog.description,
-    canonical: generateCanonicalUrl(`blog/${params.slug}`),
-    keywords: blog.keywords,
+    h1: blog.title,
+    keywords:
+      blog.keywords?.length > 0
+        ? blog.keywords
+        : ["ai prompt tutorial", "prompt engineering guide"],
+  });
+
+  return generateSEOMetadata({
+    pathname: `/blog/${params.slug}`,
+    title: seo.title,
+    description: seo.description,
+    h1: seo.h1,
+    keywords: seo.keywords,
     images: blog.featured_image ? [blog.featured_image] : [],
     type: "article",
     publishedTime: blog.created_at,
@@ -123,12 +139,35 @@ export default async function BlogDetailPage({
     day: "numeric",
   });
 
+  const linkedBlogContent = autoInternalLinkHtmlContent(blog.content || "");
+
+  const { data: relatedBlogsRaw } = await supabase
+    .from("blogs")
+    .select("id, slug, title, description, keywords, created_at")
+    .eq("status", "published")
+    .neq("id", blog.id)
+    .order("created_at", { ascending: false })
+    .limit(12);
+
+  const relatedBlogs =
+    relatedBlogsRaw
+      ?.filter((candidate: any) => {
+        if (!blog.keywords?.length || !candidate.keywords?.length) return true;
+        const current = new Set(
+          blog.keywords.map((keyword: string) => keyword.toLowerCase()),
+        );
+        return candidate.keywords.some((k: string) =>
+          current.has(k.toLowerCase()),
+        );
+      })
+      .slice(0, 3) || [];
+
   return (
     <>
       <PageSEO
         title={blog.title}
         description={blog.description}
-        canonical={generateCanonicalUrl(`blog/${params.slug}`)}
+        canonical={`/blog/${params.slug}`}
         keywords={blog.keywords}
         images={blog.featured_image ? [blog.featured_image] : []}
         type="article"
@@ -137,13 +176,16 @@ export default async function BlogDetailPage({
         authors={[blog.profiles?.username || "PromptVault Team"]}
         tags={blog.keywords}
         breadcrumbs={[
-          { name: "Home", url: generateCanonicalUrl("") },
-          { name: "Blog", url: generateCanonicalUrl("blog") },
+          { name: "Home", url: "/" },
+          { name: "Blog", url: "/blog" },
           {
             name: blog.title,
-            url: generateCanonicalUrl(`blog/${params.slug}`),
+            url: `/blog/${params.slug}`,
           },
         ]}
+        authorData={{
+          name: blog.profiles?.username || "PromptVault Team",
+        }}
       />
       <div className="min-h-screen bg-gradient-to-b from-background via-background to-purple-950/10 flex flex-col">
         <Header user={user} isAdmin={isAdmin} username={username} />
@@ -166,10 +208,18 @@ export default async function BlogDetailPage({
               {/* Featured Image */}
               {blog.featured_image && (
                 <div className="mb-8 rounded-lg overflow-hidden border border-purple-500/20">
-                  <img
-                    src={blog.featured_image || "/placeholder.svg"}
-                    alt={blog.title}
+                  <Image
+                    src={blog.featured_image}
+                    alt={generateImageAltText({
+                      title: blog.title,
+                      context: "blog featured image",
+                    })}
+                    width={1200}
+                    height={630}
                     className="w-full h-auto max-h-96 object-cover"
+                    sizes="(max-width: 1200px) 100vw, 1200px"
+                    loading="eager"
+                    unoptimized={blog.featured_image?.startsWith("http")}
                   />
                 </div>
               )}
@@ -210,8 +260,26 @@ export default async function BlogDetailPage({
               {/* Content */}
               <div
                 className="prose prose-invert max-w-none mb-12 [&_h1]:text-3xl [&_h2]:text-2xl [&_h3]:text-xl [&_h1]:font-bold [&_h2]:font-bold [&_h3]:font-bold [&_p]:text-base [&_p]:leading-relaxed [&_a]:text-purple-400 [&_a]:hover:text-purple-300 [&_blockquote]:border-l-4 [&_blockquote]:border-purple-500 [&_blockquote]:pl-4 [&_blockquote]:italic [&_code]:bg-background/50 [&_code]:px-2 [&_code]:py-1 [&_code]:rounded [&_pre]:bg-background/50 [&_pre]:p-4 [&_pre]:rounded [&_ul]:list-disc [&_ul]:ml-6 [&_ol]:list-decimal [&_ol]:ml-6"
-                dangerouslySetInnerHTML={{ __html: blog.content }}
+                dangerouslySetInnerHTML={{ __html: linkedBlogContent }}
               />
+
+              {relatedBlogs.length > 0 && (
+                <section className="mb-12 pt-6 border-t border-purple-500/20">
+                  <h2 className="text-2xl font-semibold mb-4">Related posts</h2>
+                  <ul className="space-y-3">
+                    {relatedBlogs.map((related: any) => (
+                      <li key={related.id}>
+                        <Link
+                          href={`/blog/${related.slug}`}
+                          className="text-purple-400 hover:text-purple-300"
+                        >
+                          {related.title}
+                        </Link>
+                      </li>
+                    ))}
+                  </ul>
+                </section>
+              )}
 
               {/* Back Link */}
               <div className="pt-8 border-t border-purple-500/20">

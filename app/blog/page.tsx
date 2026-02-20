@@ -8,27 +8,33 @@ import { Header } from "@/components/header";
 import { Footer } from "@/components/footer";
 import {
   generateMetadata as generateSEOMetadata,
-  generateCanonicalUrl,
+  generateAutoSEOContent,
 } from "@/lib/seo/metadata-builder";
 import { PageSEO } from "@/components/SEO/PageSEO";
 import type { Metadata } from "next";
+import Image from "next/image";
 
 export async function generateMetadata(): Promise<Metadata> {
-  return generateSEOMetadata({
-    title: "Blog & Resources - PromptVault",
+  const seo = generateAutoSEOContent({
+    pathname: "/blog",
+    title: "AI Prompt Tutorials and Prompt Engineering Guides",
     description:
-      "Read our latest articles about AI prompts, tips, and best practices. Discover expert insights on prompt engineering and AI tools.",
-    canonical: generateCanonicalUrl("blog"),
+      "Read AI prompt tutorials, growth playbooks, and prompt engineering best practices for modern LLM tools.",
+    h1: "AI Prompt Tutorials and Prompt Engineering Guides",
     keywords: [
-      "AI blog",
-      "prompt engineering tips",
-      "ChatGPT tutorials",
-      "Midjourney guides",
-      "AI best practices",
-      "prompt writing",
-      "AI tools blog",
-      "artificial intelligence articles",
+      "ai prompt tutorial",
+      "prompt engineering guide",
+      "llm tutorials",
+      "ai prompts blog",
     ],
+  });
+
+  return generateSEOMetadata({
+    pathname: "/blog",
+    title: seo.title,
+    description: seo.description,
+    h1: seo.h1,
+    keywords: seo.keywords,
     type: "website",
   });
 }
@@ -77,22 +83,18 @@ export default async function BlogsPage() {
   return (
     <>
       <PageSEO
-        title="Blog & Resources - PromptVault"
-        description="Read our latest articles about AI prompts, tips, and best practices. Discover expert insights on prompt engineering and AI tools."
-        canonical={generateCanonicalUrl("blog")}
+        title="AI Prompt Tutorials and Prompt Engineering Guides"
+        description="Read AI prompt tutorials, growth playbooks, and prompt engineering best practices for modern LLM tools."
+        canonical="/blog"
         keywords={[
-          "AI blog",
-          "prompt engineering tips",
-          "ChatGPT tutorials",
-          "Midjourney guides",
-          "AI best practices",
-          "prompt writing",
-          "AI tools blog",
-          "artificial intelligence articles",
+          "ai prompt tutorial",
+          "prompt engineering guide",
+          "llm tutorials",
+          "ai prompts blog",
         ]}
         breadcrumbs={[
-          { name: "Home", url: generateCanonicalUrl("") },
-          { name: "Blog", url: generateCanonicalUrl("blog") },
+          { name: "Home", url: "/" },
+          { name: "Blog", url: "/blog" },
         ]}
       />
       <div className="min-h-screen bg-gradient-to-b from-background via-background to-purple-950/10 flex flex-col">
@@ -123,10 +125,14 @@ export default async function BlogsPage() {
                         {/* Featured Image */}
                         {blog.featured_image && (
                           <div className="relative h-48 overflow-hidden bg-gradient-to-br from-purple-500/20 to-purple-600/20">
-                            <img
-                              src={blog.featured_image || "/placeholder.svg"}
-                              alt={blog.title}
+                            <Image
+                              src={blog.featured_image || "/icons/icon-512x512.svg"}
+                              alt={`${blog.title} featured image`}
+                              fill
+                              sizes="(max-width: 1024px) 100vw, 33vw"
                               className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                              loading="lazy"
+                              unoptimized={blog.featured_image?.startsWith("http")}
                             />
                           </div>
                         )}

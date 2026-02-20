@@ -2,10 +2,10 @@ import { MetadataRoute } from "next";
 
 export default function manifest(): MetadataRoute.Manifest {
   return {
-    name: "PromptVault - AI Prompts Collection",
+    name: "PromptVault - AI Prompt Manager",
     short_name: "PromptVault",
     description:
-      "Browse our curated collection of high-quality prompts for ChatGPT, Midjourney, Gemini and more AI tools",
+      "PromptVault is a prompt manager and AI prompt organizer for reusable prompt workflows.",
     start_url: "/",
     display: "standalone",
     background_color: "#000000",
@@ -14,33 +14,33 @@ export default function manifest(): MetadataRoute.Manifest {
     scope: "/",
     icons: [
       {
-        src: "/icons/icon-72x72.png",
+        src: "/icons/icon-72x72.svg",
         sizes: "72x72",
-        type: "image/png",
+        type: "image/svg+xml",
         purpose: "any",
       },
       {
-        src: "/icons/icon-96x96.png",
+        src: "/icons/icon-96x96.svg",
         sizes: "96x96",
-        type: "image/png",
+        type: "image/svg+xml",
         purpose: "any",
       },
       {
-        src: "/icons/icon-128x128.png",
+        src: "/icons/icon-128x128.svg",
         sizes: "128x128",
-        type: "image/png",
+        type: "image/svg+xml",
         purpose: "any",
       },
       {
-        src: "/icons/icon-144x144.png",
+        src: "/icons/icon-144x144.svg",
         sizes: "144x144",
-        type: "image/png",
+        type: "image/svg+xml",
         purpose: "any",
       },
       {
-        src: "/icons/icon-152x152.png",
+        src: "/icons/icon-152x152.svg",
         sizes: "152x152",
-        type: "image/png",
+        type: "image/svg+xml",
         purpose: "any",
       },
       {
@@ -50,15 +50,15 @@ export default function manifest(): MetadataRoute.Manifest {
         purpose: "any",
       },
       {
-        src: "/icons/icon-384x384.png",
+        src: "/icons/icon-384x384.svg",
         sizes: "384x384",
-        type: "image/png",
+        type: "image/svg+xml",
         purpose: "any",
       },
       {
-        src: "/icons/icon-512x512.png",
+        src: "/icons/icon-512x512.svg",
         sizes: "512x512",
-        type: "image/png",
+        type: "image/svg+xml",
         purpose: "any",
       },
     ],

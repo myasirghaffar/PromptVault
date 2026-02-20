@@ -9,6 +9,7 @@ import { Input } from "@/components/ui/input"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { createBrowserClient } from "@supabase/ssr"
 import { Loader2, Upload, Bold, Italic, List, LinkIcon } from "lucide-react"
+import Image from "next/image"
 
 interface BlogFormProps {
   blog?: any
@@ -202,10 +203,13 @@ export function BlogForm({ blog, onSuccess, onCancel }: BlogFormProps) {
                 </div>
                 {imagePreview && (
                   <div className="w-32 h-32 rounded-lg overflow-hidden border border-purple-500/20">
-                    <img
-                      src={imagePreview || "/placeholder.svg"}
-                      alt="Preview"
+                    <Image
+                      src={imagePreview || "/icons/icon-512x512.svg"}
+                      alt={`${formData.title || "Blog"} featured image preview`}
+                      width={128}
+                      height={128}
                       className="w-full h-full object-cover"
+                      unoptimized={imagePreview.startsWith("data:")}
                     />
                   </div>
                 )}

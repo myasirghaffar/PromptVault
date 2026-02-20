@@ -92,7 +92,13 @@ export function ApprovalsManager({ prompts: initialPrompts }: ApprovalsManagerPr
           <CardContent className="space-y-4">
             {prompt.image_url && (
               <div className="relative h-64 w-full overflow-hidden rounded-lg">
-                <Image src={prompt.image_url || "/placeholder.svg"} alt={prompt.title} fill className="object-cover" />
+                <Image
+                  src={prompt.image_url || "/placeholder.svg"}
+                  alt={prompt.title}
+                  fill
+                  className="object-cover"
+                  unoptimized={prompt.image_url?.startsWith("http")}
+                />
               </div>
             )}
 

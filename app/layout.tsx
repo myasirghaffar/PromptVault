@@ -7,23 +7,9 @@ import { SpeedInsights } from "@vercel/speed-insights/next";
 import "./globals.css";
 import { Suspense } from "react";
 import PWAInstallPrompt from "../components/pwa-install-prompt";
-import { generateMetadata, seoConfig } from "../lib/seo/metadata-builder";
-import { PageSEO } from "../components/SEO/PageSEO";
+import { generateGlobalMetadata } from "../lib/seo/metadata-builder";
 
-export const metadata: Metadata = generateMetadata({
-  title: seoConfig.defaultTitle,
-  description: seoConfig.defaultDescription,
-  canonical: seoConfig.siteUrl,
-  keywords: [
-    "AI prompts",
-    "ChatGPT",
-    "Midjourney",
-    "Gemini",
-    "prompt engineering",
-    "AI tools",
-  ],
-  type: "website",
-});
+export const metadata: Metadata = generateGlobalMetadata();
 
 export const viewport: Viewport = {
   width: "device-width",
@@ -42,6 +28,9 @@ export default function RootLayout({
   return (
     <html lang="en" className="dark">
       <head>
+        <link rel="icon" href="/favicon.ico" sizes="any" />
+        <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+        <link rel="shortcut icon" href="/favicon.ico" />
         <link rel="apple-touch-icon" href="/icons/icon-152x152.svg" />
         <link
           rel="apple-touch-icon"
@@ -59,13 +48,6 @@ export default function RootLayout({
           href="/icons/icon-192x192.svg"
         />
         <link rel="mask-icon" href="/icons/icon-192x192.svg" color="#000000" />
-        <link rel="preconnect" href="https://fonts.googleapis.com" />
-        <link
-          rel="preconnect"
-          href="https://fonts.gstatic.com"
-          crossOrigin="anonymous"
-        />
-        <PageSEO />
       </head>
       <body
         className={`font-sans ${GeistSans.variable} ${GeistMono.variable} antialiased flex flex-col min-h-screen`}

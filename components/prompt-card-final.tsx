@@ -37,6 +37,7 @@ export function PromptCard({
               sizes="(max-width: 768px) 50vw, (max-width: 1200px) 33vw, 25vw"
               priority={false}
               loading="lazy"
+              unoptimized={imageUrl.startsWith("http")}
             />
           </div>
         ) : (

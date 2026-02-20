@@ -5,6 +5,9 @@ import {
   generateArticleSchema,
   generateFAQSchema,
   generateProductSchema,
+  generateSoftwareApplicationSchema,
+  generateAuthorSchema,
+  toAbsoluteUrl,
 } from "../../lib/seo/metadata-builder";
 
 interface StructuredDataProps {
@@ -14,7 +17,9 @@ interface StructuredDataProps {
     | "breadcrumb"
     | "article"
     | "faq"
-    | "product";
+    | "product"
+    | "softwareApplication"
+    | "author";
   data?: any;
 }
 
@@ -39,6 +44,12 @@ export function StructuredData({ type, data }: StructuredDataProps) {
       break;
     case "product":
       schema = generateProductSchema(data);
+      break;
+    case "softwareApplication":
+      schema = generateSoftwareApplicationSchema();
+      break;
+    case "author":
+      schema = generateAuthorSchema(data);
       break;
     default:
       return null;
@@ -75,6 +86,10 @@ interface PageSEOProps {
     category: string;
     tags?: string[];
   };
+  authorData?: {
+    name: string;
+    url?: string;
+  };
 }
 
 export function PageSEO({
@@ -92,7 +107,14 @@ export function PageSEO({
   breadcrumbs,
   faqs,
   productData,
+  authorData,
 }: PageSEOProps) {
+  const canonicalUrl = canonical ? toAbsoluteUrl(canonical) : undefined;
+  const breadcrumbData = breadcrumbs?.map((crumb) => ({
+    ...crumb,
+    url: toAbsoluteUrl(crumb.url),
+  }));
+
   return (
     <>
       {/* Organization Schema - Always included */}
@@ -101,8 +123,11 @@ export function PageSEO({
       {/* Website Schema - Always included */}
       <StructuredData type="website" />
 
+      {/* SoftwareApplication Schema - Always included */}
+      <StructuredData type="softwareApplication" />
+
       {/* Breadcrumb Schema - Conditional */}
-      {breadcrumbs && <StructuredData type="breadcrumb" data={breadcrumbs} />}
+      {breadcrumbData && <StructuredData type="breadcrumb" data={breadcrumbData} />}
 
       {/* Article Schema - Conditional */}
       {type === "article" && publishedTime && (
@@ -111,7 +136,7 @@ export function PageSEO({
           data={{
             title,
             description,
-            url: canonical,
+            url: canonicalUrl,
             imageUrl: images?.[0],
             publishedTime,
             modifiedTime,
@@ -120,6 +145,9 @@ export function PageSEO({
           }}
         />
       )}
+
+      {/* Author Schema - Conditional */}
+      {authorData && <StructuredData type="author" data={authorData} />}
 
       {/* FAQ Schema - Conditional */}
       {faqs && <StructuredData type="faq" data={faqs} />}

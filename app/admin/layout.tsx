@@ -1,9 +1,17 @@
 import type React from "react";
+import type { Metadata } from "next";
 import { createClient } from "@/lib/supabase/server";
 import { Header } from "@/components/header";
 import { UserSidebar } from "@/components/user-sidebar";
 import { DashboardOverlay } from "@/components/dashboard-overlay";
 import { redirect } from "next/navigation";
+
+export const metadata: Metadata = {
+  robots: {
+    index: false,
+    follow: false,
+  },
+};
 
 export default async function AdminLayout({
   children,
