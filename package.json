@@ -3,10 +3,10 @@
   "version": "1.0.0",
   "private": true,
   "scripts": {
-    "build": "NEXT_PRIVATE_SKIP_TURBOPACK=1 next build",
-    "dev": "NEXT_PRIVATE_SKIP_TURBOPACK=1 next dev",
+    "build": "node init && NEXT_PRIVATE_SKIP_TURBOPACK=1 next build",
+    "dev": "node init && NEXT_PRIVATE_SKIP_TURBOPACK=1 next dev",
     "lint": "next lint",
-    "start": "next start"
+    "start": "node init && next start"
   },
   "dependencies": {
     "@hookform/resolvers": "^3.10.0",
