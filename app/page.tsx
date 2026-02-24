@@ -116,8 +116,8 @@ export default async function HomePage() {
         <Header user={user} isAdmin={isAdmin} username={username} />
 
         <main className="container mx-auto px-4 py-12 flex-1">
-          {/* Hero Section */}
-          <section className="text-center mb-12 space-y-4">
+          {/* Hero Section - hidden on mobile, visible on md+ */}
+          <section className="hidden md:block text-center mb-12 space-y-4">
             <div className="mx-auto relative w-20 h-20 mb-4">
               <Image
                 src="/icons/icon-512x512.svg"
